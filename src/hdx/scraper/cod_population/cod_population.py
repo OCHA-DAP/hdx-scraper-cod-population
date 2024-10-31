@@ -75,8 +75,8 @@ class CODPopulation:
                 headers, rows = self._retriever.get_tabular_rows(url)
                 # Find the correct p-code header and admin name headers
                 if admin_level == "1" or admin_level == "2":
-                    adm1_code_headers = _get_admin_headers(headers, admin_level)
-                    adm1_name_headers = _get_admin_name_headers(headers, admin_level)
+                    adm1_code_headers = _get_code_headers(headers, admin_level)
+                    adm1_name_headers = _get_name_headers(headers, admin_level)
                     if len(adm1_code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
@@ -91,8 +91,8 @@ class CODPopulation:
                     adm1_name_header = adm1_name_headers[0]
 
                 if admin_level == "2":
-                    adm2_code_headers = _get_admin_headers(headers, admin_level)
-                    adm2_name_headers = _get_admin_name_headers(headers, admin_level)
+                    adm2_code_headers = _get_code_headers(headers, admin_level)
+                    adm2_name_headers = _get_name_headers(headers, admin_level)
                     if len(adm2_code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
@@ -152,7 +152,7 @@ class CODPopulation:
         return dataset
 
 
-def _get_admin_headers(headers: List[str], admin_level: str) -> List[str]:
+def _get_code_headers(headers: List[str], admin_level: str) -> List[str]:
     pattern = f"adm(in)?{admin_level}_?p?code"
     code_headers = [
         header for header in headers if re.match(pattern, header, re.IGNORECASE)
@@ -160,7 +160,7 @@ def _get_admin_headers(headers: List[str], admin_level: str) -> List[str]:
     return code_headers
 
 
-def _get_admin_name_headers(headers: List[str], admin_level: str) -> List[str]:
+def _get_name_headers(headers: List[str], admin_level: str) -> List[str]:
     pattern = f"(adm(in)?{admin_level}(name)?_)((name$)|[a-z][a-z]$)"
     name_headers = [
         header for header in headers if re.match(pattern, header, re.IGNORECASE)

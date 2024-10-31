@@ -7,6 +7,8 @@ from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
 from hdx.utilities.useragent import UserAgent
 
+from hdx.scraper.cod_population.cod_population import CODPopulation
+
 
 class TestCODPopulation:
     @pytest.fixture(scope="function")
@@ -32,11 +34,7 @@ class TestCODPopulation:
         return join("src", "hdx", "scraper", "cod_population", "config")
 
     def test_cod_population(
-        self,
-        configuration,
-        fixtures_dir,
-        input_dir,
-        config_dir
+        self, configuration, fixtures_dir, input_dir, config_dir
     ):
         with temp_dir(
             "Testcod-population",
@@ -52,6 +50,12 @@ class TestCODPopulation:
                     save=False,
                     use_saved=True,
                 )
+                countries = []
+                cod_population = CODPopulation(
+                    configuration, countries, retriever, tempdir
+                )
+                cod_population.download_country_data()
+                dataset = cod_population.generate_dataset()
 
                 dataset.update_from_yaml(
                     path=join(config_dir, "hdx_dataset_static.yaml")

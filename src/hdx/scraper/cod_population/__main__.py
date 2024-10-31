@@ -10,13 +10,14 @@ from os.path import dirname, expanduser, join
 
 from hdx.api.configuration import Configuration
 from hdx.facades.infer_arguments import facade
+from hdx.location.country import Country
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import (
     wheretostart_tempdir_batch,
 )
 from hdx.utilities.retriever import Retrieve
 
-from
+from hdx.scraper.cod_population.cod_population import CODPopulation
 
 logger = logging.getLogger(__name__)
 
@@ -50,11 +51,15 @@ def main(
                 use_saved=use_saved,
             )
             configuration = Configuration.read()
+            countries = [key for key in Country.countriesdata()["countries"]]
 
             # Steps to generate dataset
 
-            cod_population = CODPopulation()
-
+            cod_population = CODPopulation(
+                configuration, countries, retriever, temp_dir
+            )
+            cod_population.download_country_data()
+            dataset = cod_population.generate_dataset()
             dataset.update_from_yaml(
                 path=join(
                     dirname(__file__), "config", "hdx_dataset_static.yaml"
@@ -76,5 +81,6 @@ if __name__ == "__main__":
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
         project_config_yaml=join(
-            dirname(__file__), "config", "project_configuration.yaml"),
+            dirname(__file__), "config", "project_configuration.yaml"
+        ),
     )

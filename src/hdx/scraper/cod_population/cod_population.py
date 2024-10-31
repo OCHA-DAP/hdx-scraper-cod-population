@@ -9,6 +9,7 @@ from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.location.country import Country
+from hdx.utilities.dateparse import parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 
@@ -71,51 +72,52 @@ class CODPopulation:
                     continue
                 resource = adm_resources[0]
                 url = resource["url"]
-                headers, rows = self._retriever.get_tabular_rows(
-                    url,
-                    dict_form=True,
-                )
+                headers, rows = self._retriever.get_tabular_rows(url)
                 # Find the correct p-code header and admin name headers
                 if admin_level == "1" or admin_level == "2":
-                    admin1_code_headers = _get_admin_headers(headers, admin_level)
-                    admin1_name_headers = _get_admin_name_headers(headers, admin_level)
-                    if len(admin1_code_headers) == 0:
+                    adm1_code_headers = _get_admin_headers(headers, admin_level)
+                    adm1_name_headers = _get_admin_name_headers(headers, admin_level)
+                    if len(adm1_code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
                         )
                         continue
-                    if len(admin1_name_headers) == 0:
+                    if len(adm1_name_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} name header not found"
                         )
                         continue
+                    adm1_code_header = adm1_code_headers[0]
+                    adm1_name_header = adm1_name_headers[0]
 
                 if admin_level == "2":
-                    admin2_code_headers = _get_admin_headers(headers, admin_level)
-                    admin2_name_headers = _get_admin_name_headers(headers, admin_level)
-                    if len(admin2_code_headers) == 0:
+                    adm2_code_headers = _get_admin_headers(headers, admin_level)
+                    adm2_name_headers = _get_admin_name_headers(headers, admin_level)
+                    if len(adm2_code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
                         )
                         continue
-                    if len(admin2_name_headers) == 0:
+                    if len(adm2_name_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} name header not found"
                         )
                         continue
+                    adm2_code_header = adm2_code_headers[0]
+                    adm2_name_header = adm2_name_headers[0]
 
                 for row in rows:
                     if admin_level == "1" or admin_level == "2":
-                        admin1_code = row[admin1_code_headers[0]]
-                        admin1_name = row[admin1_name_headers[0]]
+                        adm1_code = row[headers.index(adm1_code_header)]
+                        adm1_name = row[headers.index(adm1_name_header)]
                     if admin_level == "2":
-                        admin2_code = row[admin2_code_headers[0]]
-                        admin2_name = row[admin2_name_headers[0]]
+                        adm2_code = row[headers.index(adm2_code_header)]
+                        adm2_name = row[headers.index(adm2_name_header)]
 
-                    for header in headers:
+                    for header_i, header in enumerate(headers):
                         if not re.match("^[FMT]_", header, re.IGNORECASE):
                             continue
-                        population = row[header]
+                        population = row[header_i]
                         if "#" in population:
                             continue
                         if type(population) is str:
@@ -137,11 +139,11 @@ class CODPopulation:
                             "Country": Country.get_country_name_from_iso3(countryiso3),
                         }
                         if admin_level == "1" or admin_level == "2":
-                            admin_values["ADM1_PCODE"] = admin1_code
-                            admin_values["ADM1_NAME"] = admin1_name
+                            admin_values["ADM1_PCODE"] = adm1_code
+                            admin_values["ADM1_NAME"] = adm1_name
                         if admin_level == "2":
-                            admin_values["ADM2_PCODE"] = admin2_code
-                            admin_values["ADM2_NAME"] = admin2_name
+                            admin_values["ADM2_PCODE"] = adm2_code
+                            admin_values["ADM2_NAME"] = adm2_name
                         population_row = admin_values.update(population_values)
                         self.data[admin_level].append(population_row)
 

@@ -9,7 +9,6 @@ from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.location.country import Country
-from hdx.utilities.dateparse import parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 
@@ -66,7 +65,7 @@ class CODPopulation:
                     logger.warning(f"{countryiso3}: adm{admin_level} resource not found")
                     continue
                 if len(adm_resources) > 1:
-                    logger.warning(
+                    logger.error(
                         f"{countryiso3}: more than one adm{admin_level} resource found"
                     )
                     continue

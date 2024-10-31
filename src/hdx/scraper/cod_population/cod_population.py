@@ -126,13 +126,13 @@ class CODPopulation:
                         gender, age_range = _get_gender_and_age_range(header)
 
                         population_values = {
-                            "POPULATION_GROUP": header,
-                            "GENDER": gender,
-                            "AGE_RANGE": age_range,
-                            "POPULATION": population,
-                            "TIME_START": date_start,
-                            "TIME_END": date_end,
-                            "SOURCE": source,
+                            "Population_group": header.upper(),
+                            "Gender": gender,
+                            "Age_range": age_range,
+                            "Population": population,
+                            "Date_start": date_start,
+                            "Date_end": date_end,
+                            "Source": source,
                         }
                         admin_values = {
                             "ISO3": countryiso3,

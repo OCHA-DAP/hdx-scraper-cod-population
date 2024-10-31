@@ -134,17 +134,17 @@ class CODPopulation:
                             "Date_end": date_end,
                             "Source": source,
                         }
-                        admin_values = {
+                        population_row = {
                             "ISO3": countryiso3,
                             "Country": Country.get_country_name_from_iso3(countryiso3),
                         }
                         if admin_level == "1" or admin_level == "2":
-                            admin_values["ADM1_PCODE"] = adm1_code
-                            admin_values["ADM1_NAME"] = adm1_name
+                            population_row["ADM1_PCODE"] = adm1_code
+                            population_row["ADM1_NAME"] = adm1_name
                         if admin_level == "2":
-                            admin_values["ADM2_PCODE"] = adm2_code
-                            admin_values["ADM2_NAME"] = adm2_name
-                        population_row = admin_values.update(population_values)
+                            population_row["ADM2_PCODE"] = adm2_code
+                            population_row["ADM2_NAME"] = adm2_name
+                        population_row.update(population_values)
                         self.data[admin_level].append(population_row)
 
     def generate_dataset(self):

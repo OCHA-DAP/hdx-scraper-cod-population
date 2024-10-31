@@ -115,7 +115,7 @@ class CODPopulation:
                         adm2_name = row[headers.index(adm2_name_header)]
 
                     for header_i, header in enumerate(headers):
-                        if not re.match("^[FMT]_", header, re.IGNORECASE):
+                        if not _match_population_header(header):
                             continue
                         population = row[header_i]
                         if "#" in population:
@@ -166,6 +166,17 @@ def _get_name_headers(headers: List[str], admin_level: str) -> List[str]:
         header for header in headers if re.match(pattern, header, re.IGNORECASE)
     ]
     return name_headers
+
+
+def _match_population_header(header: str) -> bool:
+    total_pattern = "^[FMT]_TL$"
+    range_pattern = "^[FMT]_[0-9]{2,3}_[0-9]{2,3}$"
+    plus_pattern = "^[FMT]_[0-9]{2,3}_?plus$"
+    match = (
+        re.match(total_pattern, header, re.IGNORECASE)
+        or re.match(range_pattern, header, re.IGNORECASE)
+        or re.match(plus_pattern, header, re.IGNORECASE)
+    )
 
 
 def _get_gender_and_age_range(header: str) -> Tuple[str, str]:

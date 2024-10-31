@@ -55,8 +55,8 @@ def main(
 
             # Steps to generate dataset
 
-            cod_population = CODPopulation(configuration, countries, retriever, temp_dir)
-            cod_population.download_country_data()
+            cod_population = CODPopulation(configuration, retriever, temp_dir)
+            cod_population.download_country_data(countries)
             dataset = cod_population.generate_dataset()
             dataset.update_from_yaml(
                 path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")

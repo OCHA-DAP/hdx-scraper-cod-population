@@ -18,12 +18,10 @@ class CODPopulation:
     def __init__(
         self,
         configuration: Configuration,
-        countries: List,
         retriever: Retrieve,
         temp_dir: str,
     ):
         self._configuration = configuration
-        self._countries = countries
         self._retriever = retriever
         self._temp_dir = temp_dir
         self.data = {
@@ -32,10 +30,10 @@ class CODPopulation:
             "2": [],
         }
 
-    def download_country_data(self) -> None:
+    def download_country_data(self, countries: List[str]) -> None:
         logger.info("Populating population table")
-        for countryiso3 in self._countries:
-            dataset_name = f"cod-ps-{countryiso3}"
+        for countryiso3 in countries:
+            dataset_name = f"cod-ps-{countryiso3.lower()}"
             try:
                 dataset = Dataset.read_from_hdx(dataset_name)
             except HDXError:

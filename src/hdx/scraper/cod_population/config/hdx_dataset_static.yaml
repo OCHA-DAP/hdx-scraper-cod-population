@@ -1,0 +1,10 @@
+license_id: cc-by
+methodology: Other
+caveats: Please see the files for individual sources, and visit each country page for more detailed methods.
+dataset_source: HDX
+package_creator: HDX Data Systems Team
+private: False
+maintainer: aa13de36-28c5-47a7-8d0b-6d7c754ba8c8
+owner_org:  hdx
+data_update_frequency: 1
+notes: Latest COD population statistics compiled at the admin level. The CSV files contain subnational p-codes, their corresponding administrative names, source organization, and reference dates where available. These are constructed from individual country level population files.

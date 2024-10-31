@@ -107,6 +107,8 @@ class CODPopulation:
                     adm2_name_header = adm2_name_headers[0]
 
                 for row in rows:
+                    if "#" in row[0]:
+                        continue
                     if admin_level == "1" or admin_level == "2":
                         adm1_code = row[headers.index(adm1_code_header)]
                         adm1_name = row[headers.index(adm1_name_header)]
@@ -118,8 +120,6 @@ class CODPopulation:
                         if not _match_population_header(header):
                             continue
                         population = row[header_i]
-                        if "#" in population:
-                            continue
                         if type(population) is str:
                             population = population.replace(",", "")
                         population = int(population)

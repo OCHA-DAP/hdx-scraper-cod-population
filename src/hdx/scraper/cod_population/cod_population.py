@@ -177,6 +177,7 @@ def _match_population_header(header: str) -> bool:
         or re.match(range_pattern, header, re.IGNORECASE)
         or re.match(plus_pattern, header, re.IGNORECASE)
     )
+    return match
 
 
 def _get_gender_and_age_range(header: str) -> Tuple[str, str]:

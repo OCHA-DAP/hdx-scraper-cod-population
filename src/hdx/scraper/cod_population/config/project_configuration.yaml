@@ -1,5 +1,5 @@
 # Collector specific configuration
-dataset: "cod-ps-global"
+dataset_name: "cod-ps-global"
 
 tags:
   - "baseline-population"

@@ -9,6 +9,7 @@ from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.location.country import Country
+from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ class CODPopulation:
             "1": [],
             "2": [],
         }
+        self.metadata = {}
 
     def download_country_data(self, countries: List[str]) -> None:
         logger.info("Populating population table")
@@ -44,9 +46,13 @@ class CODPopulation:
             if dataset["archived"] or dataset.get("cod_level") is None:
                 continue
 
-            time_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate"]
-            time_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate"]
+            date_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate_str"]
+            date_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate_str"]
             source = dataset["dataset_source"]
+            dict_of_lists_add(self.metadata, "countries", countryiso3)
+            dict_of_lists_add(self.metadata, "date_start", date_start)
+            dict_of_lists_add(self.metadata, "date_end", date_end)
+
             for admin_level in self.data:
                 # Find a csv resource for each admin level
                 adm_resources = [
@@ -122,8 +128,8 @@ class CODPopulation:
                             "GENDER": gender,
                             "AGE_RANGE": age_range,
                             "POPULATION": population,
-                            "TIME_START": time_start,
-                            "TIME_END": time_end,
+                            "TIME_START": date_start,
+                            "TIME_END": date_end,
                             "SOURCE": source,
                         }
                         admin_values = {

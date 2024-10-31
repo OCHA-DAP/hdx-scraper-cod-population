@@ -55,14 +55,10 @@ class CODPopulation:
                     r
                     for r in dataset.get_resources()
                     if r.get_format() == "csv"
-                    and re.match(
-                        f".*adm(in)?{admin_level}.*", r["name"], re.IGNORECASE
-                    )
+                    and re.match(f".*adm(in)?{admin_level}.*", r["name"], re.IGNORECASE)
                 ]
                 if len(adm_resources) == 0:
-                    logger.warning(
-                        f"{countryiso3}: adm{admin_level} resource not found"
-                    )
+                    logger.warning(f"{countryiso3}: adm{admin_level} resource not found")
                     continue
                 if len(adm_resources) > 1:
                     logger.warning(
@@ -77,12 +73,8 @@ class CODPopulation:
                 )
                 # Find the correct p-code header and admin name headers
                 if admin_level == "1" or admin_level == "2":
-                    admin1_code_headers = _get_admin_headers(
-                        headers, admin_level
-                    )
-                    admin1_name_headers = _get_admin_name_headers(
-                        headers, admin_level
-                    )
+                    admin1_code_headers = _get_admin_headers(headers, admin_level)
+                    admin1_name_headers = _get_admin_name_headers(headers, admin_level)
                     if len(admin1_code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
@@ -95,12 +87,8 @@ class CODPopulation:
                         continue
 
                 if admin_level == "2":
-                    admin2_code_headers = _get_admin_headers(
-                        headers, admin_level
-                    )
-                    admin2_name_headers = _get_admin_name_headers(
-                        headers, admin_level
-                    )
+                    admin2_code_headers = _get_admin_headers(headers, admin_level)
+                    admin2_name_headers = _get_admin_name_headers(headers, admin_level)
                     if len(admin2_code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
@@ -142,9 +130,7 @@ class CODPopulation:
                         }
                         admin_values = {
                             "ISO3": countryiso3,
-                            "Country": Country.get_country_name_from_iso3(
-                                countryiso3
-                            ),
+                            "Country": Country.get_country_name_from_iso3(countryiso3),
                         }
                         if admin_level == "1" or admin_level == "2":
                             admin_values["ADM1_PCODE"] = admin1_code
@@ -163,9 +149,7 @@ class CODPopulation:
 def _get_admin_headers(headers: List[str], admin_level: str) -> List[str]:
     pattern = f"adm(in)?{admin_level}_?p?code"
     code_headers = [
-        header
-        for header in headers
-        if re.match(pattern, header, re.IGNORECASE)
+        header for header in headers if re.match(pattern, header, re.IGNORECASE)
     ]
     return code_headers
 
@@ -173,9 +157,7 @@ def _get_admin_headers(headers: List[str], admin_level: str) -> List[str]:
 def _get_admin_name_headers(headers: List[str], admin_level: str) -> List[str]:
     pattern = f"(adm(in)?{admin_level}(name)?_)((name$)|[a-z][a-z]$)"
     name_headers = [
-        header
-        for header in headers
-        if re.match(pattern, header, re.IGNORECASE)
+        header for header in headers if re.match(pattern, header, re.IGNORECASE)
     ]
     return name_headers
 

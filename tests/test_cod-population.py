@@ -33,9 +33,7 @@ class TestCODPopulation:
     def config_dir(self, fixtures_dir):
         return join("src", "hdx", "scraper", "cod_population", "config")
 
-    def test_cod_population(
-        self, configuration, fixtures_dir, input_dir, config_dir
-    ):
+    def test_cod_population(self, configuration, fixtures_dir, input_dir, config_dir):
         with temp_dir(
             "Testcod-population",
             delete_on_success=True,
@@ -57,6 +55,4 @@ class TestCODPopulation:
                 cod_population.download_country_data()
                 dataset = cod_population.generate_dataset()
 
-                dataset.update_from_yaml(
-                    path=join(config_dir, "hdx_dataset_static.yaml")
-                )
+                dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))

@@ -35,7 +35,7 @@ dev = ["pre-commit"]
 packages = ["src/hdx"]
 
 [tool.hatch.build.hooks.vcs]
-version-file = "src/hdx/scraper/cod-population/_version.py"
+version-file = "src/hdx/scraper/cod_population/_version.py"
 
 [tool.hatch.metadata]
 allow-direct-references = true

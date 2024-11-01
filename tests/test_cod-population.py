@@ -78,7 +78,8 @@ class TestCODPopulation:
                     "Population": 19844212,
                     "Date_start": "2021-01-01",
                     "Date_end": "2021-12-31",
-                    "Source": "National Statistic and Information Authority (NSIA) Afghanistan",
+                    "Source": "National Statistic and Information Authority (NSIA) "
+                    "Afghanistan",
                 }
                 assert cod_population.data[1][0] == {
                     "ISO3": "AFG",
@@ -91,7 +92,8 @@ class TestCODPopulation:
                     "Population": 666004,
                     "Date_start": "2021-01-01",
                     "Date_end": "2021-12-31",
-                    "Source": "National Statistic and Information Authority (NSIA) Afghanistan",
+                    "Source": "National Statistic and Information Authority (NSIA) "
+                    "Afghanistan",
                 }
                 assert cod_population.metadata == {
                     "countries": ["AFG"],
@@ -114,15 +116,21 @@ class TestCODPopulation:
                     ],
                     "license_id": "cc-by",
                     "methodology": "Other",
-                    "methodology_other": "Compiled daily from individual COD population statistics files.",
-                    "caveats": "Please see the files for individual sources, and visit each country page for more detailed methods.",
+                    "methodology_other": "Compiled daily from individual COD population "
+                    "statistics files.",
+                    "caveats": "Please see the files for individual sources, and visit "
+                    "each country page for more detailed methods.",
                     "dataset_source": "HDX",
                     "package_creator": "HDX Data Systems Team",
                     "private": False,
                     "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
                     "owner_org": "hdx",
                     "data_update_frequency": 1,
-                    "notes": "Latest COD population statistics compiled at the admin level. The CSV files contain subnational p-codes, their corresponding administrative names, source organization, and reference dates where available. These are constructed from individual country level population files.",
+                    "notes": "Latest COD population statistics compiled at the admin "
+                    "level. The CSV files contain subnational p-codes, their "
+                    "corresponding administrative names, source organization, "
+                    "and reference dates where available. These are constructed "
+                    "from individual country level population files.",
                     "subnational": 1,
                 }
 

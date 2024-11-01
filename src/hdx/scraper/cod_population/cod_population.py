@@ -73,8 +73,8 @@ class CODPopulation:
                 adm_code_headers = {}
                 adm_name_headers = {}
                 for adm_level in range(1, admin_level + 1):
-                    code_headers = _get_code_headers(headers, admin_level)
-                    name_headers = _get_name_headers(headers, admin_level)
+                    code_headers = _get_code_headers(headers, adm_level)
+                    name_headers = _get_name_headers(headers, adm_level)
                     if len(code_headers) == 0:
                         logger.error(
                             f"""
@@ -82,17 +82,17 @@ class CODPopulation:
                             adm{admin_level} resource
                             """
                         )
-                        continue
+                        break
                     if len(name_headers) == 0:
                         logger.error(
                             f"""
-                            {countryiso3}: adm{admin_level} name header not found in
+                            {countryiso3}: adm{adm_level} name header not found in
                             adm{admin_level} resource
                             """
                         )
-                        continue
-                    adm_name_headers[admin_level] = name_headers[0]
-                    adm_code_headers[admin_level] = code_headers[0]
+                        break
+                    adm_name_headers[adm_level] = name_headers[0]
+                    adm_code_headers[adm_level] = code_headers[0]
 
                 for row in rows:
                     if "#" in row[0]:

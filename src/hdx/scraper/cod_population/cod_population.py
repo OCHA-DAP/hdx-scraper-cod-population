@@ -49,6 +49,7 @@ class CODPopulation:
             dict_of_lists_add(self.metadata, "date_start", date_start)
             dict_of_lists_add(self.metadata, "date_end", date_end)
 
+            missing_levels = []
             for admin_level in range(0, 5):
                 # Find a csv resource for each admin level
                 adm_resources = [
@@ -58,7 +59,7 @@ class CODPopulation:
                     and re.match(f".*adm(in)?{admin_level}.*", r["name"], re.IGNORECASE)
                 ]
                 if len(adm_resources) == 0:
-                    logger.warning(f"{countryiso3}: adm{admin_level} resource not found")
+                    missing_levels.append(admin_level)
                     continue
                 if len(adm_resources) > 1:
                     logger.error(
@@ -127,6 +128,10 @@ class CODPopulation:
                             population_row[f"ADM{adm_level}_NAME"] = adm_names[adm_level]
                         population_row.update(population_values)
                         self.data[admin_level].append(population_row)
+
+            missing_levels = _check_missing_levels(missing_levels)
+            if len(missing_levels) > 0:
+                logger.error(f"{countryiso3} missing unexpected admin levels: {missing_levels}")
 
     def generate_dataset(self):
         dataset = Dataset(
@@ -198,3 +203,10 @@ def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
     age_range = "-".join(components[1:])
     age_range = age_range.replace("plus", "+")
     return gender, age_range
+
+
+def _check_missing_levels(missing_levels) -> List[str]:
+    expected_missing_levels = [str(i) for i in range(5 - len(missing_levels), 5)]
+    if missing_levels == expected_missing_levels:
+        return []
+    return missing_levels

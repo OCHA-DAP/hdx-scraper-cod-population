@@ -1,8 +1,10 @@
-# Collector for cod-population Datasets
+# Collector for COD Population Datasets
 [![Build Status](https://github.com/OCHA-DAP/hdx-scraper-cod-population/actions/workflows/run-python-tests.yaml/badge.svg)](https://github.com/OCHA-DAP/hdx-scraper-cod-population/actions/workflows/run-python-tests.yaml)
 [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-cod-population/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-cod-population?branch=main)
 
-This script ...
+This script extracts data from the COD population statistics datasets on HDX to
+create a global dataset. It makes several hundred read calls to HDX and one write.
+It is run every day.
 
 ## Development
 
@@ -40,7 +42,7 @@ For the script to run, you will need to have a file called
 To install and run, execute:
 
     pip install .
-    python -m hdx.scraper.cod-population
+    python -m hdx.scraper.cod_population
 
 ## Environment
 

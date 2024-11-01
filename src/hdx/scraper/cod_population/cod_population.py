@@ -73,47 +73,33 @@ class CODPopulation:
                 url = resource["url"]
                 headers, rows = self._retriever.get_tabular_rows(url)
                 # Find the correct p-code header and admin name headers
-                if admin_level == "1" or admin_level == "2":
-                    adm1_code_headers = _get_code_headers(headers, admin_level)
-                    adm1_name_headers = _get_name_headers(headers, admin_level)
-                    if len(adm1_code_headers) == 0:
+                adm_code_headers = {}
+                adm_name_headers = {}
+                for adm_level in range(1, int(admin_level) + 1):
+                    code_headers = _get_code_headers(headers, admin_level)
+                    name_headers = _get_name_headers(headers, admin_level)
+                    if len(code_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} code header not found"
                         )
                         continue
-                    if len(adm1_name_headers) == 0:
+                    if len(name_headers) == 0:
                         logger.error(
                             f"{countryiso3}: adm{admin_level} name header not found"
                         )
                         continue
-                    adm1_code_header = adm1_code_headers[0]
-                    adm1_name_header = adm1_name_headers[0]
-
-                if admin_level == "2":
-                    adm2_code_headers = _get_code_headers(headers, admin_level)
-                    adm2_name_headers = _get_name_headers(headers, admin_level)
-                    if len(adm2_code_headers) == 0:
-                        logger.error(
-                            f"{countryiso3}: adm{admin_level} code header not found"
-                        )
-                        continue
-                    if len(adm2_name_headers) == 0:
-                        logger.error(
-                            f"{countryiso3}: adm{admin_level} name header not found"
-                        )
-                        continue
-                    adm2_code_header = adm2_code_headers[0]
-                    adm2_name_header = adm2_name_headers[0]
+                    adm_name_headers[admin_level] = name_headers[0]
+                    adm_code_headers[admin_level] = code_headers[0]
 
                 for row in rows:
                     if "#" in row[0]:
                         continue
                     if admin_level == "1" or admin_level == "2":
-                        adm1_code = row[headers.index(adm1_code_header)]
-                        adm1_name = row[headers.index(adm1_name_header)]
+                        adm1_code = row[headers.index(adm_code_headers[admin_level])]
+                        adm1_name = row[headers.index(adm_name_headers[admin_level])]
                     if admin_level == "2":
-                        adm2_code = row[headers.index(adm2_code_header)]
-                        adm2_name = row[headers.index(adm2_name_header)]
+                        adm2_code = row[headers.index(adm_code_headers[admin_level])]
+                        adm2_name = row[headers.index(adm_name_headers[admin_level])]
 
                     for header_i, header in enumerate(headers):
                         if not _match_population_header(header):

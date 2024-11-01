@@ -111,7 +111,7 @@ class CODPopulation:
                         if not _match_population_header(header):
                             continue
                         population = row[header_i]
-                        if type(population) is str:
+                        if isinstance(population, str):
                             population = population.replace(",", "")
                         population = int(population)
                         gender, age_range = _get_gender_and_age_range(header)

@@ -77,12 +77,18 @@ class CODPopulation:
                     name_headers = _get_name_headers(headers, admin_level)
                     if len(code_headers) == 0:
                         logger.error(
-                            f"{countryiso3}: adm{adm_level} code header not found in adm{admin_level} resource"
+                            f"""
+                            {countryiso3}: adm{adm_level} code header not found in
+                            adm{admin_level} resource
+                            """
                         )
                         continue
                     if len(name_headers) == 0:
                         logger.error(
-                            f"{countryiso3}: adm{admin_level} name header not found in adm{admin_level} resource"
+                            f"""
+                            {countryiso3}: adm{admin_level} name header not found in
+                            adm{admin_level} resource
+                            """
                         )
                         continue
                     adm_name_headers[admin_level] = name_headers[0]
@@ -127,11 +133,13 @@ class CODPopulation:
                             population_row[f"ADM{adm_level}_PCODE"] = adm_codes[adm_level]
                             population_row[f"ADM{adm_level}_NAME"] = adm_names[adm_level]
                         population_row.update(population_values)
-                        self.data[admin_level].append(population_row)
+                        dict_of_lists_add(self.data, admin_level, population_row)
 
             missing_levels = _check_missing_levels(missing_levels)
             if len(missing_levels) > 0:
-                logger.error(f"{countryiso3} missing unexpected admin levels: {missing_levels}")
+                logger.error(
+                    f"{countryiso3} missing unexpected admin levels: {missing_levels}"
+                )
 
     def generate_dataset(self):
         dataset = Dataset(

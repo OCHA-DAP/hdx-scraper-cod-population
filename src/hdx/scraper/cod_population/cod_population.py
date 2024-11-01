@@ -25,11 +25,7 @@ class CODPopulation:
         self._configuration = configuration
         self._retriever = retriever
         self._temp_dir = temp_dir
-        self.data = {
-            "0": [],
-            "1": [],
-            "2": [],
-        }
+        self.data = {}
         self.metadata = {}
 
     def download_country_data(self, countries: List[str]) -> None:
@@ -53,7 +49,7 @@ class CODPopulation:
             dict_of_lists_add(self.metadata, "date_start", date_start)
             dict_of_lists_add(self.metadata, "date_end", date_end)
 
-            for admin_level in self.data:
+            for admin_level in range(0, 5):
                 # Find a csv resource for each admin level
                 adm_resources = [
                     r
@@ -75,17 +71,17 @@ class CODPopulation:
                 # Find the correct p-code header and admin name headers
                 adm_code_headers = {}
                 adm_name_headers = {}
-                for adm_level in range(1, int(admin_level) + 1):
+                for adm_level in range(1, admin_level + 1):
                     code_headers = _get_code_headers(headers, admin_level)
                     name_headers = _get_name_headers(headers, admin_level)
                     if len(code_headers) == 0:
                         logger.error(
-                            f"{countryiso3}: adm{admin_level} code header not found"
+                            f"{countryiso3}: adm{adm_level} code header not found in adm{admin_level} resource"
                         )
                         continue
                     if len(name_headers) == 0:
                         logger.error(
-                            f"{countryiso3}: adm{admin_level} name header not found"
+                            f"{countryiso3}: adm{admin_level} name header not found in adm{admin_level} resource"
                         )
                         continue
                     adm_name_headers[admin_level] = name_headers[0]
@@ -94,12 +90,15 @@ class CODPopulation:
                 for row in rows:
                     if "#" in row[0]:
                         continue
-                    if admin_level == "1" or admin_level == "2":
-                        adm1_code = row[headers.index(adm_code_headers[admin_level])]
-                        adm1_name = row[headers.index(adm_name_headers[admin_level])]
-                    if admin_level == "2":
-                        adm2_code = row[headers.index(adm_code_headers[admin_level])]
-                        adm2_name = row[headers.index(adm_name_headers[admin_level])]
+                    adm_codes = {}
+                    adm_names = {}
+                    for adm_level in range(1, admin_level + 1):
+                        adm_codes[adm_level] = row[
+                            headers.index(adm_code_headers[adm_level])
+                        ]
+                        adm_names[adm_level] = row[
+                            headers.index(adm_name_headers[adm_level])
+                        ]
 
                     for header_i, header in enumerate(headers):
                         if not _match_population_header(header):
@@ -123,12 +122,9 @@ class CODPopulation:
                             "ISO3": countryiso3,
                             "Country": Country.get_country_name_from_iso3(countryiso3),
                         }
-                        if admin_level == "1" or admin_level == "2":
-                            population_row["ADM1_PCODE"] = adm1_code
-                            population_row["ADM1_NAME"] = adm1_name
-                        if admin_level == "2":
-                            population_row["ADM2_PCODE"] = adm2_code
-                            population_row["ADM2_NAME"] = adm2_name
+                        for adm_level in range(1, admin_level + 1):
+                            population_row[f"ADM{adm_level}_PCODE"] = adm_codes[adm_level]
+                            population_row[f"ADM{adm_level}_NAME"] = adm_names[adm_level]
                         population_row.update(population_values)
                         self.data[admin_level].append(population_row)
 
@@ -160,7 +156,7 @@ class CODPopulation:
         return dataset
 
 
-def _get_code_headers(headers: List[str], admin_level: str) -> List[str]:
+def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
     pattern = f"adm(in)?{admin_level}_?p?code"
     code_headers = [
         header for header in headers if re.match(pattern, header, re.IGNORECASE)
@@ -168,7 +164,7 @@ def _get_code_headers(headers: List[str], admin_level: str) -> List[str]:
     return code_headers
 
 
-def _get_name_headers(headers: List[str], admin_level: str) -> List[str]:
+def _get_name_headers(headers: List[str], admin_level: int) -> List[str]:
     pattern = f"(adm(in)?{admin_level}(name)?_)((name$)|[a-z][a-z]$)"
     name_headers = [
         header for header in headers if re.match(pattern, header, re.IGNORECASE)

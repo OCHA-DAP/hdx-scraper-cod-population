@@ -133,7 +133,30 @@ class CODPopulation:
                         self.data[admin_level].append(population_row)
 
     def generate_dataset(self):
-        dataset = Dataset()
+        dataset = Dataset(
+            {
+                "name": self._configuration["dataset_name"],
+                "title": self._configuration["dataset_title"],
+            }
+        )
+        dataset.add_country_locations(self.metadata["countries"])
+        date_start = min(self.metadata["date_start"])
+        date_end = max(self.metadata["date_end"])
+        dataset.set_time_period(date_start, date_end)
+        dataset.add_tags(self._configuration["tags"])
+
+        for admin_level, admin_data in self.data.items():
+            dataset.generate_resource_from_iterable(
+                headers=list(admin_data[0].keys()),
+                iterable=admin_data,
+                hxltags=self._configuration["hxl_tags"],
+                folder=self._retriever.temp_dir,
+                filename=f"admin{admin_level}_population.csv",
+                resourcedata={
+                    "name": f"admin{admin_level}_population.csv",
+                    "description": " ",
+                },
+            )
         return dataset
 
 

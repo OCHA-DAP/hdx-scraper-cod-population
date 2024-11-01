@@ -1,5 +1,21 @@
 # Collector specific configuration
 dataset_name: "cod-ps-global"
+dataset_title: "Global Subnational Population Statistics"
 
 tags:
-  - "baseline-population"
+  - "baseline population"
+
+hxl_tags:
+  "ISO3": "#country+code"
+  "Country": "#country+name"
+  "ADM1_PCODE": "#adm1+code"
+  "ADM1_NAME": "#adm1+name"
+  "ADM2_PCODE": "#adm2+code"
+  "ADM2_NAME": "#adm2+name"
+  "Population_group": "#population+group"
+  "Gender": "#gender"
+  "Age_range": "#age+range"
+  "Population": "#population"
+  "Date_start": "#date+start"
+  "Date_end": "#date+end"
+  "Source": "#meta+source"

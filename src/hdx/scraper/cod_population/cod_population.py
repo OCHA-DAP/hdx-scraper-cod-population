@@ -214,7 +214,7 @@ def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
 
 
 def _check_missing_levels(missing_levels) -> List[str]:
-    expected_missing_levels = [str(i) for i in range(5 - len(missing_levels), 5)]
+    expected_missing_levels = [i for i in range(5 - len(missing_levels), 5)]
     if missing_levels == expected_missing_levels:
         return []
     return missing_levels

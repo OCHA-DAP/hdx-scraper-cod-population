@@ -52,7 +52,7 @@ class TestCODPopulation:
         self, configuration, read_dataset, fixtures_dir, input_dir, config_dir
     ):
         with temp_dir(
-            "Testcod-population",
+            "Test_cod_population",
             delete_on_success=True,
             delete_on_failure=False,
         ) as tempdir:

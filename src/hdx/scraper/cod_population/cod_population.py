@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""cod-population scraper"""
+"""cod population scraper"""
 
 import logging
 import re

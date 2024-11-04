@@ -4,6 +4,7 @@
 import logging
 import re
 from typing import List, Tuple
+from unicodedata import normalize
 
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
@@ -68,7 +69,10 @@ class CODPopulation:
                     continue
                 resource = adm_resources[0]
                 url = resource["url"]
-                headers, rows = self._retriever.get_tabular_rows(url)
+                encoding = self._configuration["encoding_exceptions"].get(
+                    resource["name"], "utf-8"
+                )
+                headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
                 # Find the correct p-code header and admin name headers
                 adm_code_headers = {}
                 adm_name_headers = {}
@@ -103,9 +107,16 @@ class CODPopulation:
                         adm_codes[adm_level] = row[
                             headers.index(adm_code_headers[adm_level])
                         ]
-                        adm_names[adm_level] = row[
-                            headers.index(adm_name_headers[adm_level])
-                        ]
+                        adm_name = row[headers.index(adm_name_headers[adm_level])]
+                        if encoding == "latin-1":
+                            try:
+                                adm_name = normalize(
+                                    "NFKD",
+                                    adm_name.encode("latin-1", "ignore").decode("utf-8"),
+                                )
+                            except UnicodeDecodeError:
+                                pass
+                        adm_names[adm_level] = adm_name
 
                     for header_i, header in enumerate(headers):
                         if not _match_population_header(header):

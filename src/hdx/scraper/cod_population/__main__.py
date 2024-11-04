@@ -61,19 +61,18 @@ def main(
             dataset.update_from_yaml(
                 path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
             )
-            dataset.create_in_hdx(
-                remove_additional_resources=True,
-                match_resource_order=False,
-                hxl_update=False,
-                updated_by_script=_UPDATED_BY_SCRIPT,
-                batch=info["batch"],
-            )
+            # dataset.create_in_hdx(
+            #     remove_additional_resources=True,
+            #     match_resource_order=False,
+            #     hxl_update=False,
+            #     updated_by_script=_UPDATED_BY_SCRIPT,
+            #     batch=info["batch"],
+            # )
 
 
 if __name__ == "__main__":
     facade(
         main,
-        hdx_site="dev",
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
         project_config_yaml=join(

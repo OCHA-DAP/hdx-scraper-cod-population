@@ -19,3 +19,6 @@ hxl_tags:
   "Date_start": "#date+start"
   "Date_end": "#date+end"
   "Source": "#meta+source"
+
+encoding_exceptions:
+  "ago_admpop_adm2_2024.csv": "latin-1"

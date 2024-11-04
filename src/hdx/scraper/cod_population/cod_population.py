@@ -80,14 +80,14 @@ class CODPopulation:
                     logger.error(
                         f"{iso3}: adm{adm_level} code header not found in adm{admin_level}"
                     )
-                    continue
+                else:
+                    adm_code_headers[adm_level] = code_headers[0]
                 if len(name_headers) == 0:
                     logger.error(
                         f"{iso3}: adm{adm_level} name header not found in adm{admin_level}"
                     )
-                    continue
-                adm_name_headers[adm_level] = name_headers[0]
-                adm_code_headers[adm_level] = code_headers[0]
+                else:
+                    adm_name_headers[adm_level] = name_headers[0]
 
             for row in rows:
                 if "#" in row[0]:
@@ -95,17 +95,21 @@ class CODPopulation:
                 adm_codes = {}
                 adm_names = {}
                 for adm_level in range(1, admin_level + 1):
-                    adm_codes[adm_level] = row[headers.index(adm_code_headers[adm_level])]
-                    adm_name = row[headers.index(adm_name_headers[adm_level])]
-                    if encoding == "latin-1":
-                        try:
-                            adm_name = normalize(
-                                "NFKD",
-                                adm_name.encode("latin-1", "ignore").decode("utf-8"),
-                            )
-                        except UnicodeDecodeError:
-                            pass
-                    adm_names[adm_level] = adm_name
+                    adm_code_header = adm_code_headers.get(adm_level)
+                    if adm_code_header:
+                        adm_codes[adm_level] = row[headers.index(adm_code_header)]
+                    adm_name_header = adm_name_headers.get(adm_level)
+                    if adm_name_header:
+                        adm_name = row[headers.index(adm_name_header)]
+                        if encoding == "latin-1":
+                            try:
+                                adm_name = normalize(
+                                    "NFKD",
+                                    adm_name.encode("latin-1", "ignore").decode("utf-8"),
+                                )
+                            except UnicodeDecodeError:
+                                pass
+                        adm_names[adm_level] = adm_name
 
                 for header_i, header in enumerate(headers):
                     if not _match_population_header(header):
@@ -132,8 +136,8 @@ class CODPopulation:
                         "Country": Country.get_country_name_from_iso3(iso3),
                     }
                     for adm_level in range(1, admin_level + 1):
-                        population_row[f"ADM{adm_level}_PCODE"] = adm_codes[adm_level]
-                        population_row[f"ADM{adm_level}_NAME"] = adm_names[adm_level]
+                        population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(adm_level)
+                        population_row[f"ADM{adm_level}_NAME"] = adm_names.get(adm_level)
                     population_row.update(population_values)
                     dict_of_lists_add(self.data, admin_level, population_row)
 

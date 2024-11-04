@@ -10,6 +10,7 @@ from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.location.country import Country
+from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dictandlist import dict_of_lists_add
 from hdx.utilities.retriever import Retrieve
 
@@ -30,7 +31,6 @@ class CODPopulation:
         self.metadata = {}
 
     def download_country_data(self, iso3: str) -> None:
-        logger.info(f"Downloading population data for {iso3}")
         dataset_name = f"cod-ps-{iso3.lower()}"
         try:
             dataset = Dataset.read_from_hdx(dataset_name)
@@ -42,6 +42,7 @@ class CODPopulation:
         if dataset["archived"] or dataset.get("cod_level") is None:
             return
 
+        logger.info(f"Downloading population data for {iso3}")
         date_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate_str"]
         date_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate_str"]
         source = dataset["dataset_source"]
@@ -69,7 +70,11 @@ class CODPopulation:
             encoding = self._configuration["encoding_exceptions"].get(
                 resource["name"], "utf-8"
             )
-            headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
+            try:
+                headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
+            except DownloadError:
+                logger.error(f"{iso3}: download failed for {resource['name']}")
+                continue
             # Find the correct p-code header and admin name headers
             adm_code_headers = {}
             adm_name_headers = {}
@@ -90,7 +95,8 @@ class CODPopulation:
                     adm_name_headers[adm_level] = name_headers[0]
 
             for row in rows:
-                if "#" in row[0]:
+                row_non_null = [r for r in row if r]
+                if "#" in row_non_null[0]:
                     continue
                 adm_codes = {}
                 adm_names = {}

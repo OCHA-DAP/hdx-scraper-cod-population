@@ -29,128 +29,117 @@ class CODPopulation:
         self.data = {}
         self.metadata = {}
 
-    def download_country_data(self, countries: List[str]) -> None:
-        logger.info("Populating population table")
-        for countryiso3 in countries:
-            dataset_name = f"cod-ps-{countryiso3.lower()}"
-            try:
-                dataset = Dataset.read_from_hdx(dataset_name)
-            except HDXError:
-                logger.info(f"Can't read dataset for {countryiso3}")
-                continue
-            if not dataset:
-                continue
-            if dataset["archived"] or dataset.get("cod_level") is None:
-                continue
+    def download_country_data(self, iso3: str) -> None:
+        logger.info(f"Downloading population data for {iso3}")
+        dataset_name = f"cod-ps-{iso3.lower()}"
+        try:
+            dataset = Dataset.read_from_hdx(dataset_name)
+        except HDXError:
+            logger.info(f"Can't read dataset for {iso3}")
+            return
+        if not dataset:
+            return
+        if dataset["archived"] or dataset.get("cod_level") is None:
+            return
 
-            date_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate_str"]
-            date_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate_str"]
-            source = dataset["dataset_source"]
-            dict_of_lists_add(self.metadata, "countries", countryiso3)
-            dict_of_lists_add(self.metadata, "date_start", date_start)
-            dict_of_lists_add(self.metadata, "date_end", date_end)
+        date_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate_str"]
+        date_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate_str"]
+        source = dataset["dataset_source"]
+        dict_of_lists_add(self.metadata, "countries", iso3)
+        dict_of_lists_add(self.metadata, "date_start", date_start)
+        dict_of_lists_add(self.metadata, "date_end", date_end)
 
-            missing_levels = []
-            for admin_level in range(0, 5):
-                # Find a csv resource for each admin level
-                adm_resources = [
-                    r
-                    for r in dataset.get_resources()
-                    if r.get_format() == "csv"
-                    and re.match(f".*adm(in)?{admin_level}.*", r["name"], re.IGNORECASE)
-                ]
-                if len(adm_resources) == 0:
-                    missing_levels.append(admin_level)
-                    continue
-                if len(adm_resources) > 1:
+        missing_levels = []
+        for admin_level in range(0, 5):
+            # Find a csv resource for each admin level
+            adm_resources = [
+                r
+                for r in dataset.get_resources()
+                if r.get_format() == "csv"
+                and re.match(f".*adm(in)?{admin_level}.*", r["name"], re.IGNORECASE)
+            ]
+            if len(adm_resources) == 0:
+                missing_levels.append(admin_level)
+                continue
+            if len(adm_resources) > 1:
+                logger.error(f"{iso3}: more than one adm{admin_level} resource found")
+                continue
+            resource = adm_resources[0]
+            url = resource["url"]
+            encoding = self._configuration["encoding_exceptions"].get(
+                resource["name"], "utf-8"
+            )
+            headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
+            # Find the correct p-code header and admin name headers
+            adm_code_headers = {}
+            adm_name_headers = {}
+            for adm_level in range(1, admin_level + 1):
+                code_headers = _get_code_headers(headers, adm_level)
+                name_headers = _get_name_headers(headers, adm_level)
+                if len(code_headers) == 0:
                     logger.error(
-                        f"{countryiso3}: more than one adm{admin_level} resource found"
+                        f"{iso3}: adm{adm_level} code header not found in adm{admin_level}"
                     )
                     continue
-                resource = adm_resources[0]
-                url = resource["url"]
-                encoding = self._configuration["encoding_exceptions"].get(
-                    resource["name"], "utf-8"
-                )
-                headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
-                # Find the correct p-code header and admin name headers
-                adm_code_headers = {}
-                adm_name_headers = {}
+                if len(name_headers) == 0:
+                    logger.error(
+                        f"{iso3}: adm{adm_level} name header not found in adm{admin_level}"
+                    )
+                    continue
+                adm_name_headers[adm_level] = name_headers[0]
+                adm_code_headers[adm_level] = code_headers[0]
+
+            for row in rows:
+                if "#" in row[0]:
+                    continue
+                adm_codes = {}
+                adm_names = {}
                 for adm_level in range(1, admin_level + 1):
-                    code_headers = _get_code_headers(headers, adm_level)
-                    name_headers = _get_name_headers(headers, adm_level)
-                    if len(code_headers) == 0:
-                        logger.error(
-                            f"""
-                            {countryiso3}: adm{adm_level} code header not found in
-                            adm{admin_level} resource
-                            """
-                        )
-                        break
-                    if len(name_headers) == 0:
-                        logger.error(
-                            f"""
-                            {countryiso3}: adm{adm_level} name header not found in
-                            adm{admin_level} resource
-                            """
-                        )
-                        break
-                    adm_name_headers[adm_level] = name_headers[0]
-                    adm_code_headers[adm_level] = code_headers[0]
+                    adm_codes[adm_level] = row[headers.index(adm_code_headers[adm_level])]
+                    adm_name = row[headers.index(adm_name_headers[adm_level])]
+                    if encoding == "latin-1":
+                        try:
+                            adm_name = normalize(
+                                "NFKD",
+                                adm_name.encode("latin-1", "ignore").decode("utf-8"),
+                            )
+                        except UnicodeDecodeError:
+                            pass
+                    adm_names[adm_level] = adm_name
 
-                for row in rows:
-                    if "#" in row[0]:
+                for header_i, header in enumerate(headers):
+                    if not _match_population_header(header):
                         continue
-                    adm_codes = {}
-                    adm_names = {}
+                    population = row[header_i]
+                    if population is None:
+                        continue
+                    if isinstance(population, str):
+                        population = population.replace(",", "")
+                    population = int(population)
+                    gender, age_range = _get_gender_and_age_range(header)
+
+                    population_values = {
+                        "Population_group": header.upper(),
+                        "Gender": gender,
+                        "Age_range": age_range,
+                        "Population": population,
+                        "Date_start": date_start,
+                        "Date_end": date_end,
+                        "Source": source,
+                    }
+                    population_row = {
+                        "ISO3": iso3,
+                        "Country": Country.get_country_name_from_iso3(iso3),
+                    }
                     for adm_level in range(1, admin_level + 1):
-                        adm_codes[adm_level] = row[
-                            headers.index(adm_code_headers[adm_level])
-                        ]
-                        adm_name = row[headers.index(adm_name_headers[adm_level])]
-                        if encoding == "latin-1":
-                            try:
-                                adm_name = normalize(
-                                    "NFKD",
-                                    adm_name.encode("latin-1", "ignore").decode("utf-8"),
-                                )
-                            except UnicodeDecodeError:
-                                pass
-                        adm_names[adm_level] = adm_name
+                        population_row[f"ADM{adm_level}_PCODE"] = adm_codes[adm_level]
+                        population_row[f"ADM{adm_level}_NAME"] = adm_names[adm_level]
+                    population_row.update(population_values)
+                    dict_of_lists_add(self.data, admin_level, population_row)
 
-                    for header_i, header in enumerate(headers):
-                        if not _match_population_header(header):
-                            continue
-                        population = row[header_i]
-                        if isinstance(population, str):
-                            population = population.replace(",", "")
-                        population = int(population)
-                        gender, age_range = _get_gender_and_age_range(header)
-
-                        population_values = {
-                            "Population_group": header.upper(),
-                            "Gender": gender,
-                            "Age_range": age_range,
-                            "Population": population,
-                            "Date_start": date_start,
-                            "Date_end": date_end,
-                            "Source": source,
-                        }
-                        population_row = {
-                            "ISO3": countryiso3,
-                            "Country": Country.get_country_name_from_iso3(countryiso3),
-                        }
-                        for adm_level in range(1, admin_level + 1):
-                            population_row[f"ADM{adm_level}_PCODE"] = adm_codes[adm_level]
-                            population_row[f"ADM{adm_level}_NAME"] = adm_names[adm_level]
-                        population_row.update(population_values)
-                        dict_of_lists_add(self.data, admin_level, population_row)
-
-            missing_levels = _check_missing_levels(missing_levels)
-            if len(missing_levels) > 0:
-                logger.error(
-                    f"{countryiso3} missing unexpected admin levels: {missing_levels}"
-                )
+        missing_levels = _check_missing_levels(missing_levels)
+        if len(missing_levels) > 0:
+            logger.error(f"{iso3} missing unexpected admin levels: {missing_levels}")
 
     def generate_dataset(self):
         dataset = Dataset(

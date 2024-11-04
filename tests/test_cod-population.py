@@ -65,9 +65,8 @@ class TestCODPopulation:
                     save=False,
                     use_saved=True,
                 )
-                countries = ["AFG"]
                 cod_population = CODPopulation(configuration, retriever, tempdir)
-                cod_population.download_country_data(countries)
+                cod_population.download_country_data("AFG")
                 assert len(cod_population.data) == 2
                 assert cod_population.data[0][0] == {
                     "ISO3": "AFG",

@@ -51,12 +51,13 @@ def main(
                 use_saved=use_saved,
             )
             configuration = Configuration.read()
-            countries = [key for key in Country.countriesdata()["countries"]]
+            countryiso3s = [key for key in Country.countriesdata()["countries"]]
 
             # Steps to generate dataset
 
             cod_population = CODPopulation(configuration, retriever, temp_dir)
-            cod_population.download_country_data(countries)
+            for iso3 in countryiso3s:
+                cod_population.download_country_data(iso3)
             dataset = cod_population.generate_dataset()
             dataset.update_from_yaml(
                 path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")

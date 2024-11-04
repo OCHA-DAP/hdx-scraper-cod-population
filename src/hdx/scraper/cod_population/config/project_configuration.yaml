@@ -22,3 +22,6 @@ hxl_tags:
 
 encoding_exceptions:
   "ago_admpop_adm2_2024.csv": "latin-1"
+  "caf_admpop_adm1_2015_v2.csv": "latin-1"
+  "caf_admpop_adm2_2015_v2.csv": "latin-1"
+  "caf_admpop_adm3_2015_v2.csv": "latin-1"

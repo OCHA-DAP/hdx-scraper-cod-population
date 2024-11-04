@@ -25,3 +25,6 @@ encoding_exceptions:
   "caf_admpop_adm1_2015_v2.csv": "latin-1"
   "caf_admpop_adm2_2015_v2.csv": "latin-1"
   "caf_admpop_adm3_2015_v2.csv": "latin-1"
+  "kyrgyzstan_population_statistics_2018_adm1_v2.csv": "latin-1"
+  "kyrgyzstan_population_statistics_2018_adm2_v2.csv": "latin-1"
+  "pak_admpop_adm3.csv": "latin-1"

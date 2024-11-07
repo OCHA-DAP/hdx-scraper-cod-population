@@ -128,7 +128,7 @@ class CODPopulation:
                         continue
                     if isinstance(population, str):
                         population = population.replace(",", "")
-                    population = int(population)
+                    population = int(float(population))
                     gender, age_range = _get_gender_and_age_range(header)
 
                     population_values = {

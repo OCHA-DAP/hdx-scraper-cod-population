@@ -19,6 +19,8 @@ hxl_tags:
   "Population_group": "#population+group"
   "Gender": "#gender"
   "Age_range": "#age+range"
+  "Age_min": "#age+min"
+  "Age_max": "#age+max"
   "Population": "#population"
   "Date_start": "#date+start"
   "Date_end": "#date+end"

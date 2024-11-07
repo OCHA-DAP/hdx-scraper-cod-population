@@ -132,11 +132,14 @@ class CODPopulation:
                         population = population.replace(",", "")
                     population = int(float(population))
                     gender, age_range = _get_gender_and_age_range(header)
+                    min_age, max_age = _get_min_and_max_age(age_range)
 
                     population_values = {
                         "Population_group": header.upper(),
                         "Gender": gender,
                         "Age_range": age_range,
+                        "Age_min": min_age,
+                        "Age_max": max_age,
                         "Population": population,
                         "Date_start": date_start,
                         "Date_end": date_end,
@@ -233,6 +236,20 @@ def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
     age_range = "-".join(components[1:])
     age_range = age_range.replace("plus", "+")
     return gender, age_range
+
+
+def _get_min_and_max_age(age_range: str) -> (int | None, int | None):
+    if age_range == "all" or age_range == "unknown":
+        return None, None
+    ages = age_range.split("-")
+    if len(ages) == 2:
+        # Format: 0-5
+        min_age, max_age = int(ages[0]), int(ages[1])
+    else:
+        # Format: 80+
+        min_age = int(age_range.replace("+", ""))
+        max_age = None
+    return min_age, max_age
 
 
 def _check_missing_levels(missing_levels: List[str]) -> List[str]:

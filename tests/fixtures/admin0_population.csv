@@ -1,56 +1,11 @@
 ISO3,Country,Population_group,Gender,Age_range,Population,Date_start,Date_end,Source
 #country+code,#country+name,#population+group,#gender,#age+range,#population,#date+start,#date+end,#meta+source
-AFG,Afghanistan,F_TL,f,all,19844212,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_TL,m,all,20567657,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_TL,all,all,40411869,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_00_04,f,0-4,3571135,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_00_04,m,0-4,3707169,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_00_04,all,0-4,7278304,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_05_09,f,5-9,3074578,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_05_09,m,5-9,3287301,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_05_09,all,5-9,6361879,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_10_14,f,10-14,2596038,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_10_14,m,10-14,2854676,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_10_14,all,10-14,5450714,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_15_19,f,15-19,2207556,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_15_19,m,15-19,2358275,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_15_19,all,15-19,4565831,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_20_24,f,20-24,1878525,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_20_24,m,20-24,1748303,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_20_24,all,20-24,3626828,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_25_29,f,25-29,1515233,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_25_29,m,25-29,1377017,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_25_29,all,25-29,2892250,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_30_34,f,30-34,1060459,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_30_34,m,30-34,1068417,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_30_34,all,30-34,2128876,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_35_39,f,35-39,858455,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_35_39,m,35-39,872978,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_35_39,all,35-39,1731433,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_40_44,f,40-44,787500,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_40_44,m,40-44,742594,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_40_44,all,40-44,1530094,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_45_49,f,45-49,656811,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_45_49,m,45-49,618145,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_45_49,all,45-49,1274956,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_50_54,f,50-54,504923,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_50_54,m,50-54,492761,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_50_54,all,50-54,997684,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_55_59,f,55-59,392537,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_55_59,m,55-59,411633,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_55_59,all,55-59,804170,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_60_64,f,60-64,291370,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_60_64,m,60-64,364200,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_60_64,all,60-64,655570,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_65_69,f,65-69,205202,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_65_69,m,65-69,281597,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_65_69,all,65-69,486799,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_70_74,f,70-74,126061,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_70_74,m,70-74,190017,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_70_74,all,70-74,316078,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_75_79,f,75-79,53939,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_75_79,m,75-79,89455,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_75_79,all,75-79,143394,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,F_80PLUS,f,80+,63890,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,M_80PLUS,m,80+,103119,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
-AFG,Afghanistan,T_80PLUS,all,80+,167009,2021-01-01,2021-12-31,National Statistic and Information Authority (NSIA) Afghanistan
+COD,Democratic Republic of the Congo,F_00_04,f,0-4,9853646,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,M_00_04,m,0-4,10147364,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,F_05_19,f,5-19,19705741,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,M_05_19,m,5-19,20293436,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,T_00_04,all,0-4,20001010,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,T_05_19,all,5-19,39999177,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,F_TL,f,all,52367665,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,M_TL,m,all,50831693,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group
+COD,Democratic Republic of the Congo,T_TL,all,all,103199358,2019-01-01,2020-12-31,Health Zone population statistics developed by the DRC IM Working Group

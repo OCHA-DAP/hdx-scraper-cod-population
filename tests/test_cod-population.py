@@ -66,8 +66,9 @@ class TestCODPopulation:
                     use_saved=True,
                 )
                 cod_population = CODPopulation(configuration, retriever, tempdir)
+                cod_population.download_country_data("CAF")
                 cod_population.download_country_data("COD")
-                assert len(cod_population.data) == 3
+                assert len(cod_population.data) == 4
                 assert cod_population.data[0][0] == {
                     "ISO3": "COD",
                     "Country": "Democratic Republic of the Congo",
@@ -81,39 +82,57 @@ class TestCODPopulation:
                     "Working Group",
                 }
                 assert cod_population.data[1][0] == {
-                    "ISO3": "COD",
-                    "Country": "Democratic Republic of the Congo",
-                    "ADM1_PCODE": "CD52",
-                    "ADM1_NAME": "Bas-Uele",
-                    "Population_group": "F_00_04",
-                    "Gender": "f",
-                    "Age_range": "0-4",
-                    "Population": 96557,
-                    "Date_start": "2019-01-01",
-                    "Date_end": "2020-12-31",
-                    "Source": "Health Zone population statistics developed by the DRC IM "
-                    "Working Group",
+                    "ISO3": "CAF",
+                    "Country": "Central African Republic",
+                    "ADM1_PCODE": "CF11",
+                    "ADM1_NAME": "Ombella M'Poko",
+                    "Population_group": "T_TL",
+                    "Gender": "all",
+                    "Age_range": "all",
+                    "Population": 448465,
+                    "Date_start": "2015-01-01",
+                    "Date_end": "2022-12-31",
+                    "Source": "General Census of Population and Housing, Census Office "
+                    "Central African Republic",
                 }
                 assert cod_population.data[2][0] == {
-                    "ISO3": "COD",
-                    "Country": "Democratic Republic of the Congo",
-                    "ADM1_PCODE": "CD10",
-                    "ADM1_NAME": "Kinshasa",
-                    "ADM2_PCODE": "CD1000",
-                    "ADM2_NAME": "Kinshasa",
-                    "Population_group": "F_00_04",
-                    "Gender": "f",
-                    "Age_range": "0-4",
-                    "Population": 1035155,
-                    "Date_start": "2019-01-01",
-                    "Date_end": "2020-12-31",
-                    "Source": "Health Zone population statistics developed by the DRC IM "
-                    "Working Group",
+                    "ISO3": "CAF",
+                    "Country": "Central African Republic",
+                    "ADM1_PCODE": "CF22",
+                    "ADM1_NAME": "Nana Mambéré",
+                    "ADM2_PCODE": "CF224",
+                    "ADM2_NAME": "Abba",
+                    "Population_group": "T_TL",
+                    "Gender": "all",
+                    "Age_range": "all",
+                    "Population": 28016,
+                    "Date_start": "2015-01-01",
+                    "Date_end": "2022-12-31",
+                    "Source": "General Census of Population and Housing, Census Office "
+                    "Central African Republic",
+                }
+                assert cod_population.data[3][0] == {
+                    "ISO3": "CAF",
+                    "Country": "Central African Republic",
+                    "ADM1_PCODE": "CF11",
+                    "ADM1_NAME": "Ombella M'Poko",
+                    "ADM2_PCODE": "CF111",
+                    "ADM2_NAME": "Bimbo",
+                    "ADM3_PCODE": "CF1111",
+                    "ADM3_NAME": "Bimbo",
+                    "Population_group": "T_TL",
+                    "Gender": "all",
+                    "Age_range": "all",
+                    "Population": 276042,
+                    "Date_start": "2015-01-01",
+                    "Date_end": "2022-12-31",
+                    "Source": "General Census of Population and Housing, Census Office "
+                    "Central African Republic",
                 }
                 assert cod_population.metadata == {
-                    "countries": ["COD"],
-                    "date_end": ["2020-12-31"],
-                    "date_start": ["2019-01-01"],
+                    "countries": ["CAF", "COD"],
+                    "date_end": ["2022-12-31", "2020-12-31"],
+                    "date_start": ["2015-01-01", "2019-01-01"],
                 }
 
                 dataset = cod_population.generate_dataset()
@@ -121,8 +140,8 @@ class TestCODPopulation:
                 assert dataset == {
                     "name": "cod-ps-global",
                     "title": "Global Subnational Population Statistics",
-                    "groups": [{"name": "cod"}],
-                    "dataset_date": "[2019-01-01T00:00:00 TO 2020-12-31T23:59:59]",
+                    "groups": [{"name": "caf"}, {"name": "cod"}],
+                    "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
                     "tags": [
                         {
                             "name": "baseline population",
@@ -150,4 +169,4 @@ class TestCODPopulation:
                 }
 
                 resources = dataset.get_resources()
-                assert len(resources) == 3
+                assert len(resources) == 4

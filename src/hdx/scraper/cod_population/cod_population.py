@@ -188,9 +188,13 @@ def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
 
 
 def _get_name_headers(headers: List[str], admin_level: int) -> List[str]:
-    pattern = f"(adm(in)?{admin_level}(name)?_)((name$)|[a-z][a-z]$)"
+    pattern = f"(adm(in)?{admin_level}(name)?_?)((name$)|[a-z][a-z]$)"
+    other_pattern = f"^name_?{admin_level}$"
     name_headers = [
-        header for header in headers if re.match(pattern, header, re.IGNORECASE)
+        header
+        for header in headers
+        if re.match(pattern, header, re.IGNORECASE)
+        or re.match(other_pattern, header, re.IGNORECASE)
     ]
     return name_headers
 

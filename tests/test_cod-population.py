@@ -156,7 +156,7 @@ class TestCODPopulation:
                     "each country page for more detailed methods.",
                     "dataset_source": "HDX",
                     "package_creator": "HDX Data Systems Team",
-                    "private": False,
+                    "private": True,
                     "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
                     "owner_org": "hdx",
                     "data_update_frequency": 1,

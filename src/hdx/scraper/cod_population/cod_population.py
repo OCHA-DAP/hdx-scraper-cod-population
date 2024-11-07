@@ -9,6 +9,7 @@ from unicodedata import normalize
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
+from hdx.data.resource import Resource
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dictandlist import dict_of_lists_add
@@ -62,6 +63,8 @@ class CODPopulation:
             if len(adm_resources) == 0:
                 missing_levels.append(admin_level)
                 continue
+            if len(adm_resources) > 1:
+                adm_resources = _select_latest_resource(adm_resources)
             if len(adm_resources) > 1:
                 logger.error(f"{iso3}: more than one adm{admin_level} resource found")
                 continue
@@ -227,8 +230,21 @@ def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
     return gender, age_range
 
 
-def _check_missing_levels(missing_levels) -> List[str]:
+def _check_missing_levels(missing_levels: List[str]) -> List[str]:
     expected_missing_levels = [i for i in range(5 - len(missing_levels), 5)]
     if missing_levels == expected_missing_levels:
         return []
     return missing_levels
+
+
+def _select_latest_resource(adm_resources: List[Resource]) -> List[Resource]:
+    adm_names = [adm_resource["name"] for adm_resource in adm_resources]
+    pattern = "(?<!\\d)2\\d{3}(?!\\d)"
+    year_matches = [re.findall(pattern, name, re.IGNORECASE) for name in adm_names]
+    year_matches = sum(year_matches, [])
+    if len(year_matches) != len(adm_resources):
+        return adm_resources
+    year_matches = [int(y) for y in year_matches]
+    max_index = year_matches.index(max(year_matches))
+    adm_resources = [adm_resources[max_index]]
+    return adm_resources

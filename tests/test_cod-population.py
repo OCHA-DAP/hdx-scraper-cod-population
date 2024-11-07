@@ -66,38 +66,54 @@ class TestCODPopulation:
                     use_saved=True,
                 )
                 cod_population = CODPopulation(configuration, retriever, tempdir)
-                cod_population.download_country_data("AFG")
-                assert len(cod_population.data) == 2
+                cod_population.download_country_data("COD")
+                assert len(cod_population.data) == 3
                 assert cod_population.data[0][0] == {
-                    "ISO3": "AFG",
-                    "Country": "Afghanistan",
-                    "Population_group": "F_TL",
+                    "ISO3": "COD",
+                    "Country": "Democratic Republic of the Congo",
+                    "Population_group": "F_00_04",
                     "Gender": "f",
-                    "Age_range": "all",
-                    "Population": 19844212,
-                    "Date_start": "2021-01-01",
-                    "Date_end": "2021-12-31",
-                    "Source": "National Statistic and Information Authority (NSIA) "
-                    "Afghanistan",
+                    "Age_range": "0-4",
+                    "Population": 9853646,
+                    "Date_start": "2019-01-01",
+                    "Date_end": "2020-12-31",
+                    "Source": "Health Zone population statistics developed by the DRC IM "
+                    "Working Group",
                 }
                 assert cod_population.data[1][0] == {
-                    "ISO3": "AFG",
-                    "Country": "Afghanistan",
-                    "ADM1_PCODE": "AF17",
-                    "ADM1_NAME": "Badakhshan",
-                    "Population_group": "F_TL",
+                    "ISO3": "COD",
+                    "Country": "Democratic Republic of the Congo",
+                    "ADM1_PCODE": "CD52",
+                    "ADM1_NAME": "Bas-Uele",
+                    "Population_group": "F_00_04",
                     "Gender": "f",
-                    "Age_range": "all",
-                    "Population": 666004,
-                    "Date_start": "2021-01-01",
-                    "Date_end": "2021-12-31",
-                    "Source": "National Statistic and Information Authority (NSIA) "
-                    "Afghanistan",
+                    "Age_range": "0-4",
+                    "Population": 96557,
+                    "Date_start": "2019-01-01",
+                    "Date_end": "2020-12-31",
+                    "Source": "Health Zone population statistics developed by the DRC IM "
+                    "Working Group",
+                }
+                assert cod_population.data[2][0] == {
+                    "ISO3": "COD",
+                    "Country": "Democratic Republic of the Congo",
+                    "ADM1_PCODE": "CD10",
+                    "ADM1_NAME": "Kinshasa",
+                    "ADM2_PCODE": "CD1000",
+                    "ADM2_NAME": "Kinshasa",
+                    "Population_group": "F_00_04",
+                    "Gender": "f",
+                    "Age_range": "0-4",
+                    "Population": 1035155,
+                    "Date_start": "2019-01-01",
+                    "Date_end": "2020-12-31",
+                    "Source": "Health Zone population statistics developed by the DRC IM "
+                    "Working Group",
                 }
                 assert cod_population.metadata == {
-                    "countries": ["AFG"],
-                    "date_end": ["2021-12-31"],
-                    "date_start": ["2021-01-01"],
+                    "countries": ["COD"],
+                    "date_end": ["2020-12-31"],
+                    "date_start": ["2019-01-01"],
                 }
 
                 dataset = cod_population.generate_dataset()
@@ -105,8 +121,8 @@ class TestCODPopulation:
                 assert dataset == {
                     "name": "cod-ps-global",
                     "title": "Global Subnational Population Statistics",
-                    "groups": [{"name": "afg"}],
-                    "dataset_date": "[2021-01-01T00:00:00 TO 2021-12-31T23:59:59]",
+                    "groups": [{"name": "cod"}],
+                    "dataset_date": "[2019-01-01T00:00:00 TO 2020-12-31T23:59:59]",
                     "tags": [
                         {
                             "name": "baseline population",
@@ -127,11 +143,11 @@ class TestCODPopulation:
                     "data_update_frequency": 1,
                     "notes": "Latest COD population statistics compiled at the admin "
                     "level. The CSV files contain subnational p-codes, their "
-                    "corresponding administrative names, source organization, "
-                    "and reference dates where available. These are constructed "
-                    "from individual country level population files.",
+                    "corresponding administrative names, source organization, and "
+                    "reference dates where available. These are constructed from "
+                    "individual country level population files.",
                     "subnational": 1,
                 }
 
                 resources = dataset.get_resources()
-                assert len(resources) == 2
+                assert len(resources) == 3

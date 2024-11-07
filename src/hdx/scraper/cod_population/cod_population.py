@@ -12,7 +12,7 @@ from hdx.data.hdxobject import HDXError
 from hdx.data.resource import Resource
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
-from hdx.utilities.dictandlist import dict_of_lists_add
+from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
 from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
@@ -30,6 +30,7 @@ class CODPopulation:
         self._temp_dir = temp_dir
         self.data = {}
         self.metadata = {}
+        self._nonmatching_headers = {}
 
     def download_country_data(self, iso3: str) -> None:
         dataset_name = f"cod-ps-{iso3.lower()}"
@@ -122,6 +123,7 @@ class CODPopulation:
 
                 for header_i, header in enumerate(headers):
                     if not _match_population_header(header):
+                        dict_of_sets_add(self._nonmatching_headers, iso3, header)
                         continue
                     population = row[header_i]
                     if population is None:
@@ -204,9 +206,9 @@ def _get_name_headers(headers: List[str], admin_level: int) -> List[str]:
 
 def _match_population_header(header: str) -> bool:
     total_pattern = "^[FMT]_TL$"
-    range_pattern = "^[FMT]_[0-9]{2,3}_[0-9]{2,3}$"
+    range_pattern = "^[FMT]_[0-9]{1,3}_?[0-9]{1,3}$"
     plus_pattern = "^[FMT]_[0-9]{2,3}_?plus$"
-    match = (
+    match = bool(
         re.match(total_pattern, header, re.IGNORECASE)
         or re.match(range_pattern, header, re.IGNORECASE)
         or re.match(plus_pattern, header, re.IGNORECASE)
@@ -222,6 +224,9 @@ def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
     if components[1] == "tl":
         age_range = "all"
         return gender, age_range
+    if len(components) == 2 and len(components[1]) == 4:
+        components.append(components[1][-2:])
+        components[1] = components[1][:2]
     if len(components[1:]) == 2:
         components[1] = str(int(components[1]))
         components[2] = str(int(components[2]))

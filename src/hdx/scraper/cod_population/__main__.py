@@ -54,7 +54,6 @@ def main(
             countryiso3s = [key for key in Country.countriesdata()["countries"]]
 
             # Steps to generate dataset
-
             cod_population = CODPopulation(configuration, retriever, temp_dir)
             for iso3 in countryiso3s:
                 cod_population.download_country_data(iso3)

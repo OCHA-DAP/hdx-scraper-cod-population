@@ -84,7 +84,9 @@ class CODPopulation:
             adm_name_headers = {}
             for adm_level in range(1, admin_level + 1):
                 code_headers = _get_code_headers(headers, adm_level)
-                name_headers = _get_name_headers(headers, adm_level)
+                name_headers = _get_name_headers(
+                    headers, adm_level, self._configuration["non_latin_alphabets"]
+                )
                 if len(code_headers) == 0:
                     logger.error(
                         f"{iso3}: adm{adm_level} code header not found in adm{admin_level}"
@@ -195,7 +197,9 @@ def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
     return code_headers
 
 
-def _get_name_headers(headers: List[str], admin_level: int) -> List[str]:
+def _get_name_headers(
+    headers: List[str], admin_level: int, non_latin_alphabets: List[str]
+) -> List[str]:
     pattern = f"(adm(in)?{admin_level}(name)?_?)((name$)|[a-z][a-z]$)"
     other_pattern = f"^name_?{admin_level}$"
     name_headers = [
@@ -204,6 +208,18 @@ def _get_name_headers(headers: List[str], admin_level: int) -> List[str]:
         if re.match(pattern, header, re.IGNORECASE)
         or re.match(other_pattern, header, re.IGNORECASE)
     ]
+    if len(name_headers) <= 1:
+        return name_headers
+    en_name_headers = [n for n in name_headers if n[-3:].lower() == "_en"]
+    if len(en_name_headers) == 1:
+        return en_name_headers
+    latin_name_headers = [
+        n
+        for n in name_headers
+        if n[-3] == "_" and n[-2:].lower() not in non_latin_alphabets
+    ]
+    if len(latin_name_headers) > 0:
+        return latin_name_headers
     return name_headers
 
 

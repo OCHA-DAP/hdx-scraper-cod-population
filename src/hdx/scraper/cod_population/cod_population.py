@@ -176,7 +176,7 @@ class CODPopulation:
         dataset.add_tags(self._configuration["tags"])
 
         dataset_sources = sorted(self.metadata["source"])
-        dataset["dataset_source"] = dataset_sources
+        dataset["dataset_source"] = ", ".join(dataset_sources)
 
         for admin_level, admin_data in self.data.items():
             dataset.generate_resource_from_iterable(

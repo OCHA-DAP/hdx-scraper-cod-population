@@ -156,12 +156,9 @@ class TestCODPopulation:
                     "title": "Global Subnational Population Statistics",
                     "groups": [{"name": "caf"}, {"name": "cod"}],
                     "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
-                    "dataset_source": [
-                        "General Census of Population and Housing, Census Office Central "
-                        "African Republic",
-                        "Health Zone population statistics developed by the DRC IM "
-                        "Working Group",
-                    ],
+                    "dataset_source": "General Census of Population and Housing, Census "
+                    "Office Central African Republic, Health Zone population statistics "
+                    "developed by the DRC IM Working Group",
                     "tags": [
                         {
                             "name": "baseline population",

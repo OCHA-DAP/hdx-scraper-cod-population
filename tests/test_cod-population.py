@@ -163,6 +163,7 @@ class TestCODPopulation:
                     "dataset_source": "General Census of Population and Housing, Census "
                     "Office Central African Republic, Health Zone population statistics "
                     "developed by the DRC IM Working Group",
+                    "cod_level": "cod-standard",
                     "tags": [
                         {
                             "name": "baseline population",

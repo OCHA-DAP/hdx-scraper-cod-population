@@ -179,6 +179,7 @@ class CODPopulation:
 
         dataset_sources = sorted(self.metadata["source"])
         dataset["dataset_source"] = ", ".join(dataset_sources)
+        dataset["cod_level"] = "cod-standard"
 
         for admin_level, admin_data in self.data.items():
             dataset.generate_resource_from_iterable(

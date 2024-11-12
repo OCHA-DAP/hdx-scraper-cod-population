@@ -82,6 +82,7 @@ class TestCODPopulation:
                     "Date_end": "2020-12-31",
                     "Source": "Health Zone population statistics developed by the DRC IM "
                     "Working Group",
+                    "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
                 }
                 assert cod_population.data[1][0] == {
                     "ISO3": "CAF",
@@ -98,6 +99,7 @@ class TestCODPopulation:
                     "Date_end": "2022-12-31",
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
+                    "Contributor": "OCHA Central African Republic",
                 }
                 assert cod_population.data[2][0] == {
                     "ISO3": "CAF",
@@ -116,6 +118,7 @@ class TestCODPopulation:
                     "Date_end": "2022-12-31",
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
+                    "Contributor": "OCHA Central African Republic",
                 }
                 assert cod_population.data[3][0] == {
                     "ISO3": "CAF",
@@ -136,6 +139,7 @@ class TestCODPopulation:
                     "Date_end": "2022-12-31",
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
+                    "Contributor": "OCHA Central African Republic",
                 }
                 assert cod_population.metadata == {
                     "countries": ["CAF", "COD"],

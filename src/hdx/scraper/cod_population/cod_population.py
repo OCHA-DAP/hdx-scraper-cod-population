@@ -48,6 +48,7 @@ class CODPopulation:
         date_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate_str"]
         date_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate_str"]
         source = dataset["dataset_source"]
+        organization = dataset.get_organization()["display_name"]
         dict_of_lists_add(self.metadata, "countries", iso3)
         dict_of_lists_add(self.metadata, "date_start", date_start)
         dict_of_lists_add(self.metadata, "date_end", date_end)
@@ -147,6 +148,7 @@ class CODPopulation:
                         "Date_start": date_start,
                         "Date_end": date_end,
                         "Source": source,
+                        "Contributor": organization,
                     }
                     population_row = {
                         "ISO3": iso3,

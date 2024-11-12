@@ -62,7 +62,7 @@ frictionless==5.18.0
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-hdx-python-api==6.3.4
+hdx-python-api==6.3.5
     # via
     #   -c requirements.txt
     #   hdx-scraper-cod-population (pyproject.toml)
@@ -161,7 +161,7 @@ openpyxl==3.1.5
     # via
     #   -c requirements.txt
     #   hdx-python-utilities
-packaging==24.1
+packaging==24.2
     # via pytest
 petl==1.7.15
     # via
@@ -266,7 +266,7 @@ ruamel-yaml-clib==0.2.12
     # via
     #   -c requirements.txt
     #   ruamel-yaml
-setuptools==75.3.0
+setuptools==75.4.0
     # via
     #   -c requirements.txt
     #   ckanapi
@@ -347,7 +347,7 @@ validators==0.34.0
     # via
     #   -c requirements.txt
     #   frictionless
-wheel==0.44.0
+wheel==0.45.0
     # via
     #   -c requirements.txt
     #   libhxl

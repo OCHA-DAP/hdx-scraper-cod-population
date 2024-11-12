@@ -1,12 +1,11 @@
 license_id: cc-by
 methodology: Other
-methodology_other: Compiled daily from individual COD population statistics files.
-caveats: Please see the files for individual sources, and visit each country page for more detailed methods.
-dataset_source: HDX
+methodology_other: Compiled daily from individual COD population statistics files. Please refer to the source datasets to learn more about their specific methodologies.
+caveats: This dataset is refreshed daily, but the source datasets have different update schedules. Please refer to the source datasets to verify their specific update frequency.
 package_creator: HDX Data Systems Team
 private: True
 maintainer: aa13de36-28c5-47a7-8d0b-6d7c754ba8c8
 owner_org:  hdx
 data_update_frequency: 1
-notes: Latest COD population statistics compiled at the admin level. The CSV files contain subnational p-codes, their corresponding administrative names, source organization, and reference dates where available. These are constructed from individual country level population files.
+notes: Latest COD population statistics compiled at the admin level. The CSV files contain subnational p-codes, their corresponding administrative names, source organization, and reference dates where available. These are constructed from individual country level population files, which can be found using [this search](https://data.humdata.org/dataset/?dataseries_name=COD+-+Subnational+Population+Statistics) on HDX.
 subnational: 1

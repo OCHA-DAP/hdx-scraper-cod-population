@@ -4,6 +4,7 @@ dataset_title: "Global Subnational Population Statistics"
 
 tags:
   - "baseline population"
+  - "sex and age disaggregated data-sadd"
 
 hxl_tags:
   "ISO3": "#country+code"

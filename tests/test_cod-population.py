@@ -141,6 +141,12 @@ class TestCODPopulation:
                     "countries": ["CAF", "COD"],
                     "date_end": ["2022-12-31", "2020-12-31"],
                     "date_start": ["2015-01-01", "2019-01-01"],
+                    "source": [
+                        "General Census of Population and Housing, Census Office Central "
+                        "African Republic",
+                        "Health Zone population statistics developed by the DRC IM "
+                        "Working Group",
+                    ],
                 }
 
                 dataset = cod_population.generate_dataset()
@@ -150,19 +156,30 @@ class TestCODPopulation:
                     "title": "Global Subnational Population Statistics",
                     "groups": [{"name": "caf"}, {"name": "cod"}],
                     "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
+                    "dataset_source": [
+                        "General Census of Population and Housing, Census Office Central "
+                        "African Republic",
+                        "Health Zone population statistics developed by the DRC IM "
+                        "Working Group",
+                    ],
                     "tags": [
                         {
                             "name": "baseline population",
                             "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
-                        }
+                        },
+                        {
+                            "name": "sex and age disaggregated data-sadd",
+                            "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                        },
                     ],
                     "license_id": "cc-by",
                     "methodology": "Other",
                     "methodology_other": "Compiled daily from individual COD population "
-                    "statistics files.",
-                    "caveats": "Please see the files for individual sources, and visit "
-                    "each country page for more detailed methods.",
-                    "dataset_source": "HDX",
+                    "statistics files. Please refer to the source datasets to learn more "
+                    "about their specific methodologies.",
+                    "caveats": "This dataset is refreshed daily, but the source datasets "
+                    "have different update schedules. Please refer to the source datasets "
+                    "to verify their specific update frequency.",
                     "package_creator": "HDX Data Systems Team",
                     "private": True,
                     "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
@@ -172,7 +189,9 @@ class TestCODPopulation:
                     "level. The CSV files contain subnational p-codes, their "
                     "corresponding administrative names, source organization, and "
                     "reference dates where available. These are constructed from "
-                    "individual country level population files.",
+                    "individual country level population files, which can be found "
+                    "using [this search](https://data.humdata.org/dataset/?dataseries_name"
+                    "=COD+-+Subnational+Population+Statistics) on HDX.",
                     "subnational": 1,
                 }
 

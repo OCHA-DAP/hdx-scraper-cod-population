@@ -51,6 +51,7 @@ class CODPopulation:
         dict_of_lists_add(self.metadata, "countries", iso3)
         dict_of_lists_add(self.metadata, "date_start", date_start)
         dict_of_lists_add(self.metadata, "date_end", date_end)
+        dict_of_lists_add(self.metadata, "source", source)
 
         missing_levels = []
         for admin_level in range(0, 5):
@@ -174,15 +175,18 @@ class CODPopulation:
         dataset.set_time_period(date_start, date_end)
         dataset.add_tags(self._configuration["tags"])
 
+        dataset_sources = sorted(self.metadata["source"])
+        dataset["dataset_source"] = dataset_sources
+
         for admin_level, admin_data in self.data.items():
             dataset.generate_resource_from_iterable(
                 headers=list(admin_data[0].keys()),
                 iterable=admin_data,
                 hxltags=self._configuration["hxl_tags"],
                 folder=self._retriever.temp_dir,
-                filename=f"admin{admin_level}_population.csv",
+                filename=f"admin{admin_level}_cod_population.csv",
                 resourcedata={
-                    "name": f"admin{admin_level}_population.csv",
+                    "name": f"admin{admin_level}_cod_population.csv",
                     "description": " ",
                 },
             )

@@ -192,6 +192,7 @@ class CODPopulation:
                     "name": f"cod_population_admin{admin_level}.csv",
                     "description": " ",
                 },
+                encoding="utf-8-sig",
             )
         return dataset
 

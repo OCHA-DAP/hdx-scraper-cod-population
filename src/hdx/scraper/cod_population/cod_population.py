@@ -184,9 +184,9 @@ class CODPopulation:
                 iterable=admin_data,
                 hxltags=self._configuration["hxl_tags"],
                 folder=self._retriever.temp_dir,
-                filename=f"admin{admin_level}_cod_population.csv",
+                filename=f"cod_population_admin{admin_level}.csv",
                 resourcedata={
-                    "name": f"admin{admin_level}_cod_population.csv",
+                    "name": f"cod_population_admin{admin_level}.csv",
                     "description": " ",
                 },
             )

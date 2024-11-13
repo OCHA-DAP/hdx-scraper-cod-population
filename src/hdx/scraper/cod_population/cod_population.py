@@ -31,6 +31,7 @@ class CODPopulation:
         self.data = {}
         self.metadata = {}
         self._nonmatching_headers = {}
+        self._year_sources = {}
 
     def download_country_data(self, iso3: str) -> None:
         dataset_name = f"cod-ps-{iso3.lower()}"
@@ -45,13 +46,10 @@ class CODPopulation:
             return
 
         logger.info(f"Downloading population data for {iso3}")
-        date_start = dataset.get_time_period(date_format="%Y-%m-%d")["startdate_str"]
-        date_end = dataset.get_time_period(date_format="%Y-%m-%d")["enddate_str"]
+        year_end = int(dataset.get_time_period(date_format="%Y")["enddate_str"])
         source = dataset["dataset_source"]
         organization = dataset.get_organization()["display_name"]
         dict_of_lists_add(self.metadata, "countries", iso3)
-        dict_of_lists_add(self.metadata, "date_start", date_start)
-        dict_of_lists_add(self.metadata, "date_end", date_end)
         dict_of_lists_add(self.metadata, "source", source)
 
         missing_levels = []
@@ -101,11 +99,28 @@ class CODPopulation:
                     )
                 else:
                     adm_name_headers[adm_level] = name_headers[0]
-
+            reference_year = self._configuration["reference_year_exceptions"].get(
+                resource["name"]
+            )
+            resource_year = _get_resource_year(resource["name"])
+            date_header = headers.index("year") if "year" in headers else None
+            if reference_year:
+                dict_of_sets_add(self._year_sources, iso3, "exception")
             for row in rows:
                 row_non_null = [r for r in row if r]
                 if "#" in row_non_null[0]:
                     continue
+                if not reference_year:
+                    if date_header is not None:
+                        reference_year = int(row[date_header])
+                        dict_of_sets_add(self._year_sources, iso3, "date header")
+                    elif resource_year != -1:
+                        reference_year = resource_year
+                        dict_of_sets_add(self._year_sources, iso3, "resource name")
+                    else:
+                        reference_year = year_end
+                        dict_of_sets_add(self._year_sources, iso3, "dataset date")
+                dict_of_sets_add(self.metadata, "reference_year", reference_year)
                 adm_codes = {}
                 adm_names = {}
                 for adm_level in range(1, admin_level + 1):
@@ -145,8 +160,7 @@ class CODPopulation:
                         "Age_min": min_age,
                         "Age_max": max_age,
                         "Population": population,
-                        "Date_start": date_start,
-                        "Date_end": date_end,
+                        "Reference_year": reference_year,
                         "Source": source,
                         "Contributor": organization,
                     }
@@ -172,9 +186,9 @@ class CODPopulation:
             }
         )
         dataset.add_country_locations(self.metadata["countries"])
-        date_start = min(self.metadata["date_start"])
-        date_end = max(self.metadata["date_end"])
-        dataset.set_time_period(date_start, date_end)
+        year_start = min(self.metadata["reference_year"])
+        year_end = max(self.metadata["reference_year"])
+        dataset.set_time_period_year_range(year_start, year_end)
         dataset.add_tags(self._configuration["tags"])
 
         dataset_sources = sorted(self.metadata["source"])
@@ -276,7 +290,7 @@ def _get_min_and_max_age(age_range: str) -> (int | None, int | None):
     return min_age, max_age
 
 
-def _check_missing_levels(missing_levels: List[str]) -> List[str]:
+def _check_missing_levels(missing_levels: List[int]) -> List[int]:
     expected_missing_levels = [i for i in range(5 - len(missing_levels), 5)]
     if missing_levels == expected_missing_levels:
         return []
@@ -285,12 +299,18 @@ def _check_missing_levels(missing_levels: List[str]) -> List[str]:
 
 def _select_latest_resource(adm_resources: List[Resource]) -> List[Resource]:
     adm_names = [adm_resource["name"] for adm_resource in adm_resources]
-    pattern = "(?<!\\d)2\\d{3}(?!\\d)"
-    year_matches = [re.findall(pattern, name, re.IGNORECASE) for name in adm_names]
-    year_matches = sum(year_matches, [])
-    if len(year_matches) != len(adm_resources):
-        return adm_resources
+    year_matches = [_get_resource_year(name) for name in adm_names]
     year_matches = [int(y) for y in year_matches]
     max_index = year_matches.index(max(year_matches))
+    if max_index == -1:
+        return adm_resources
     adm_resources = [adm_resources[max_index]]
     return adm_resources
+
+
+def _get_resource_year(resource_name: str) -> int:
+    pattern = "(?<!\\d)2\\d{3}(?!\\d)"
+    year_matches = re.findall(pattern, resource_name, re.IGNORECASE)
+    if len(year_matches) == 0:
+        return -1
+    return int(year_matches[0])

@@ -78,8 +78,7 @@ class TestCODPopulation:
                     "Age_min": 0,
                     "Age_max": 4,
                     "Population": 9853646,
-                    "Date_start": "2019-01-01",
-                    "Date_end": "2020-12-31",
+                    "Reference_year": 2020,
                     "Source": "Health Zone population statistics developed by the DRC IM "
                     "Working Group",
                     "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
@@ -95,8 +94,7 @@ class TestCODPopulation:
                     "Age_min": None,
                     "Age_max": None,
                     "Population": 448465,
-                    "Date_start": "2015-01-01",
-                    "Date_end": "2022-12-31",
+                    "Reference_year": 2015,
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
                     "Contributor": "OCHA Central African Republic",
@@ -114,8 +112,7 @@ class TestCODPopulation:
                     "Age_min": None,
                     "Age_max": None,
                     "Population": 28016,
-                    "Date_start": "2015-01-01",
-                    "Date_end": "2022-12-31",
+                    "Reference_year": 2015,
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
                     "Contributor": "OCHA Central African Republic",
@@ -135,16 +132,14 @@ class TestCODPopulation:
                     "Age_min": None,
                     "Age_max": None,
                     "Population": 276042,
-                    "Date_start": "2015-01-01",
-                    "Date_end": "2022-12-31",
+                    "Reference_year": 2015,
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
                     "Contributor": "OCHA Central African Republic",
                 }
                 assert cod_population.metadata == {
                     "countries": ["CAF", "COD"],
-                    "date_end": ["2022-12-31", "2020-12-31"],
-                    "date_start": ["2015-01-01", "2019-01-01"],
+                    "reference_year": {2020, 2015},
                     "source": [
                         "General Census of Population and Housing, Census Office Central "
                         "African Republic",
@@ -159,7 +154,7 @@ class TestCODPopulation:
                     "name": "cod-ps-global",
                     "title": "Global Subnational Population Statistics",
                     "groups": [{"name": "caf"}, {"name": "cod"}],
-                    "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
+                    "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",
                     "dataset_source": "General Census of Population and Housing, Census "
                     "Office Central African Republic, Health Zone population statistics "
                     "developed by the DRC IM Working Group",

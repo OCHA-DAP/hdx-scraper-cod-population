@@ -23,9 +23,9 @@ hxl_tags:
   "Age_min": "#age+min"
   "Age_max": "#age+max"
   "Population": "#population"
-  "Date_start": "#date+start"
-  "Date_end": "#date+end"
+  "Reference_year": "#date+year"
   "Source": "#meta+source"
+  "Contributor": "#meta+contributor"
 
 encoding_exceptions:
   "ago_admpop_adm2_2024.csv": "latin-1"
@@ -34,6 +34,14 @@ encoding_exceptions:
   "caf_admpop_adm3_2015_v2.csv": "latin-1"
   "kyrgyzstan_population_statistics_2018_adm1_v2.csv": "latin-1"
   "kyrgyzstan_population_statistics_2018_adm2_v2.csv": "latin-1"
+
+reference_year_exceptions:
+  "fsm_pplp_adm0_country_v2.csv": 2010
+  "fsm_pplp_adm1_state_v2.csv": 2010
+  "fsm_pplp_adm2_municipality_v2.csv": 2010
+  "som_pplp_adm0_v2.csv": 2014
+  "som_pplp_adm1_v2.csv": 2014
+  "som_pplp_adm2_v2.csv": 2014
 
 non_latin_alphabets:
   - "ar"

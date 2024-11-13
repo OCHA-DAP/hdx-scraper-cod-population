@@ -50,7 +50,6 @@ class CODPopulation:
         source = dataset["dataset_source"]
         organization = dataset.get_organization()["display_name"]
         dict_of_lists_add(self.metadata, "countries", iso3)
-        dict_of_lists_add(self.metadata, "source", source)
 
         missing_levels = []
         for admin_level in range(0, 5):
@@ -190,9 +189,6 @@ class CODPopulation:
         year_end = max(self.metadata["reference_year"])
         dataset.set_time_period_year_range(year_start, year_end)
         dataset.add_tags(self._configuration["tags"])
-
-        dataset_sources = sorted(self.metadata["source"])
-        dataset["dataset_source"] = ", ".join(dataset_sources)
         dataset["cod_level"] = "cod-standard"
 
         for admin_level, admin_data in self.data.items():

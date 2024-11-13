@@ -140,24 +140,16 @@ class TestCODPopulation:
                 assert cod_population.metadata == {
                     "countries": ["CAF", "COD"],
                     "reference_year": {2020, 2015},
-                    "source": [
-                        "General Census of Population and Housing, Census Office Central "
-                        "African Republic",
-                        "Health Zone population statistics developed by the DRC IM "
-                        "Working Group",
-                    ],
                 }
 
                 dataset = cod_population.generate_dataset()
                 dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
                 assert dataset == {
                     "name": "cod-ps-global",
-                    "title": "Global Subnational Population Statistics",
+                    "title": "OCHA Global Subnational Population Statistics",
                     "groups": [{"name": "caf"}, {"name": "cod"}],
                     "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",
-                    "dataset_source": "General Census of Population and Housing, Census "
-                    "Office Central African Republic, Health Zone population statistics "
-                    "developed by the DRC IM Working Group",
+                    "dataset_source": "Multiple sources",
                     "cod_level": "cod-standard",
                     "tags": [
                         {

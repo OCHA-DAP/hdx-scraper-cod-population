@@ -1,6 +1,6 @@
 # Collector specific configuration
 dataset_name: "cod-ps-global"
-dataset_title: "Global Subnational Population Statistics"
+dataset_title: "OCHA Global Subnational Population Statistics"
 
 tags:
   - "baseline population"

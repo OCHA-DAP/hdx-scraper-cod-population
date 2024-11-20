@@ -26,7 +26,7 @@ jobs:
       env:
         HDX_SITE: ${{ vars.HDX_SITE }}
         HDX_KEY: ${{ secrets.HDX_BOT_SCRAPERS_API_TOKEN }}
-        PREPREFIX: ${{ secrets.HDX_PIPELINE_PREPREFIX }}
+        PREPREFIX: ${{ vars.HDX_PIPELINE_PREPREFIX }}
         USER_AGENT: ${{ vars.USER_AGENT }}
         EXTRA_PARAMS: ${{ vars.EXTRA_PARAMS }}
       run: |
@@ -42,4 +42,4 @@ jobs:
         subject: "FAILED: ${{github.repository}} run job"
         body: GitHub Actions run job for ${{github.repository}} failed!
         to: ${{secrets.HDX_PIPELINE_EMAIL_LIST}}
-        from: ${{secrets.HDX_PIPELINE_EMAIL_FROM}}
+        from: ${{vars.HDX_PIPELINE_EMAIL_FROM}}

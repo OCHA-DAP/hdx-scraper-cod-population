@@ -172,6 +172,7 @@ class TestCODPopulation:
                     "](https://data.humdata.org/dataset/?dataseries_name=COD+-+Subnational+"
                     "Population+Statistics) to verify their specific update frequency.",
                     "package_creator": "HDX Data Systems Team",
+                    "private": False,
                     "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
                     "owner_org": "hdx",
                     "data_update_frequency": 1,

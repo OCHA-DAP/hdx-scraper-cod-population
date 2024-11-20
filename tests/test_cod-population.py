@@ -164,11 +164,13 @@ class TestCODPopulation:
                     "license_id": "cc-by",
                     "methodology": "Other",
                     "methodology_other": "Compiled daily from individual COD population "
-                    "statistics files. Please refer to the source datasets to learn more "
-                    "about their specific methodologies.",
+                    "statistics files. Please refer to the [source datasets](https://data."
+                    "humdata.org/dataset/?dataseries_name=COD+-+Subnational+Population+"
+                    "Statistics) to learn more about their specific methodologies.",
                     "caveats": "This dataset is refreshed daily, but the source datasets "
-                    "have different update schedules. Please refer to the source datasets "
-                    "to verify their specific update frequency.",
+                    "have different update schedules. Please refer to the [source datasets"
+                    "](https://data.humdata.org/dataset/?dataseries_name=COD+-+Subnational+"
+                    "Population+Statistics) to verify their specific update frequency.",
                     "package_creator": "HDX Data Systems Team",
                     "private": True,
                     "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",

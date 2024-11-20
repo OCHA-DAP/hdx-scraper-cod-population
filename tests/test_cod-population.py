@@ -182,7 +182,8 @@ class TestCODPopulation:
                     "individual country level population files, which can be found "
                     "using [this search](https://data.humdata.org/dataset/?dataseries_name"
                     "=COD+-+Subnational+Population+Statistics) on HDX.",
-                    "subnational": 1,
+                    "subnational": "1",
+                    "dataset_preview": "no_preview",
                 }
 
                 resources = dataset.get_resources()

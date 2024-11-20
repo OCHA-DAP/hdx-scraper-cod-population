@@ -42,4 +42,4 @@ jobs:
         subject: "FAILED: ${{github.repository}} run job"
         body: file://errors.txt
         to: ${{secrets.EMAIL_LIST}}
-        from: ${{vars.HDX_PIPELINE_EMAIL_FROM}}
+        from: ${{secrets.HDX_PIPELINE_EMAIL_FROM}}

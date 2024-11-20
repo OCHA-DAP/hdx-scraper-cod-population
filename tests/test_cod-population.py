@@ -71,7 +71,9 @@ class TestCODPopulation:
                 )
                 cod_population.download_country_data("CAF")
                 cod_population.download_country_data("COD")
-                assert cod_population.errors.errors == []
+                assert cod_population.errors.errors == [
+                    "CAF: 1 duplicate values found in adm2"
+                ]
                 assert len(cod_population.data) == 4
                 assert cod_population.data[0][0] == {
                     "ISO3": "COD",
@@ -104,22 +106,22 @@ class TestCODPopulation:
                     "Contributor": "OCHA Central African Republic",
                 }
                 assert cod_population.data[2][0] == {
-                    "ISO3": "CAF",
-                    "Country": "Central African Republic",
-                    "ADM1_PCODE": "CF22",
-                    "ADM1_NAME": "Nana Mambéré",
-                    "ADM2_PCODE": "CF224",
-                    "ADM2_NAME": "Abba",
-                    "Population_group": "T_TL",
-                    "Gender": "all",
-                    "Age_range": "all",
-                    "Age_min": None,
-                    "Age_max": None,
-                    "Population": 28016,
-                    "Reference_year": 2015,
-                    "Source": "General Census of Population and Housing, Census Office "
-                    "Central African Republic",
-                    "Contributor": "OCHA Central African Republic",
+                    "ISO3": "COD",
+                    "Country": "Democratic Republic of the Congo",
+                    "ADM1_PCODE": "CD10",
+                    "ADM1_NAME": "Kinshasa",
+                    "ADM2_PCODE": "CD1000",
+                    "ADM2_NAME": "Kinshasa",
+                    "Population_group": "F_00_04",
+                    "Gender": "f",
+                    "Age_range": "0-4",
+                    "Age_min": 0,
+                    "Age_max": 4,
+                    "Population": 1035155,
+                    "Reference_year": 2020,
+                    "Source": "Health Zone population statistics developed by the DRC IM "
+                    "Working Group",
+                    "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
                 }
                 assert cod_population.data[3][0] == {
                     "ISO3": "CAF",

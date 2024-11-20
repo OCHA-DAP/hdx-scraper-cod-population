@@ -56,6 +56,9 @@ class CODPopulation:
 
         missing_levels = []
         for admin_level in range(0, 5):
+            population_rows = []
+            country_keys = set()
+            duplicates = 0
             # Find a csv resource for each admin level
             adm_resources = [
                 r
@@ -179,7 +182,25 @@ class CODPopulation:
                         population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(adm_level)
                         population_row[f"ADM{adm_level}_NAME"] = adm_names.get(adm_level)
                     population_row.update(population_values)
-                    dict_of_lists_add(self.data, admin_level, population_row)
+                    population_rows.append(population_row)
+
+                    country_key = tuple(
+                        value
+                        for key, value in population_row.items()
+                        if key
+                        not in ["Population", "Reference_year", "Source", "Contributor"]
+                    )
+                    if country_key in country_keys:
+                        duplicates += 1
+                    country_keys.add(country_key)
+
+            if duplicates > 0:
+                self.errors.add(
+                    f"{iso3}: {duplicates} duplicate values found in adm{admin_level}"
+                )
+                continue
+            for population_row in population_rows:
+                dict_of_lists_add(self.data, admin_level, population_row)
 
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:

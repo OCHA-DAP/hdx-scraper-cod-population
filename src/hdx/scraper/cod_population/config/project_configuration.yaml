@@ -65,3 +65,4 @@ known_errors:
   - "GMB missing unexpected admin levels: [0, 2, 3, 4]"
   - "KGZ missing unexpected admin levels: [0, 3, 4]"
   - "MAR missing unexpected admin levels: [0, 1, 3, 4]"
+  - "POL missing unexpected admin levels: [0, 3, 4]"

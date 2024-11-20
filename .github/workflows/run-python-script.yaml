@@ -26,7 +26,7 @@ jobs:
       env:
         HDX_SITE: ${{ vars.HDX_SITE }}
         HDX_KEY: ${{ secrets.HDX_BOT_SCRAPERS_API_TOKEN }}
-        PREPREFIX: ${{ vars.HDX_PIPELINE_PREPREFIX }}
+        PREPREFIX: ${{ secrets.HDX_PIPELINE_PREPREFIX }}
         USER_AGENT: ${{ vars.USER_AGENT }}
         EXTRA_PARAMS: ${{ vars.EXTRA_PARAMS }}
       run: |

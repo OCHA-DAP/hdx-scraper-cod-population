@@ -4,6 +4,7 @@ import pytest
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
 from hdx.utilities.downloader import Download
+from hdx.utilities.errors_onexit import ErrorsOnExit
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
 from hdx.utilities.useragent import UserAgent
@@ -65,9 +66,12 @@ class TestCODPopulation:
                     save=False,
                     use_saved=True,
                 )
-                cod_population = CODPopulation(configuration, retriever, tempdir)
+                cod_population = CODPopulation(
+                    configuration, retriever, tempdir, ErrorsOnExit()
+                )
                 cod_population.download_country_data("CAF")
                 cod_population.download_country_data("COD")
+                assert cod_population.errors.errors == []
                 assert len(cod_population.data) == 4
                 assert cod_population.data[0][0] == {
                     "ISO3": "COD",

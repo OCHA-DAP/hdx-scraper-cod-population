@@ -40,6 +40,6 @@ jobs:
         username: ${{secrets.HDX_PIPELINE_EMAIL_USERNAME}}
         password: ${{secrets.HDX_PIPELINE_EMAIL_PASSWORD}}
         subject: "FAILED: ${{github.repository}} run job"
-        body: GitHub Actions run job for ${{github.repository}} failed!
-        to: ${{secrets.HDX_PIPELINE_EMAIL_LIST}}
+        body: file://errors.txt
+        to: ${{secrets.EMAIL_LIST}}
         from: ${{vars.HDX_PIPELINE_EMAIL_FROM}}

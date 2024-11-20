@@ -12,6 +12,7 @@ from hdx.api.configuration import Configuration
 from hdx.facades.infer_arguments import facade
 from hdx.location.country import Country
 from hdx.utilities.downloader import Download
+from hdx.utilities.errors_onexit import ErrorsOnExit
 from hdx.utilities.path import (
     wheretostart_tempdir_batch,
 )
@@ -39,35 +40,45 @@ def main(
     Returns:
         None
     """
-    with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
-        temp_dir = info["folder"]
-        with Download() as downloader:
-            retriever = Retrieve(
-                downloader=downloader,
-                fallback_dir=temp_dir,
-                saved_dir=_SAVED_DATA_DIR,
-                temp_dir=temp_dir,
-                save=save,
-                use_saved=use_saved,
-            )
-            configuration = Configuration.read()
-            countryiso3s = [key for key in Country.countriesdata()["countries"]]
+    with ErrorsOnExit() as errors_on_exit:
+        with wheretostart_tempdir_batch(folder=_USER_AGENT_LOOKUP) as info:
+            temp_dir = info["folder"]
+            with Download() as downloader:
+                retriever = Retrieve(
+                    downloader=downloader,
+                    fallback_dir=temp_dir,
+                    saved_dir=_SAVED_DATA_DIR,
+                    temp_dir=temp_dir,
+                    save=save,
+                    use_saved=use_saved,
+                )
+                configuration = Configuration.read()
+                countryiso3s = [key for key in Country.countriesdata()["countries"]]
 
-            # Steps to generate dataset
-            cod_population = CODPopulation(configuration, retriever, temp_dir)
-            for iso3 in countryiso3s:
-                cod_population.download_country_data(iso3)
-            dataset = cod_population.generate_dataset()
-            dataset.update_from_yaml(
-                path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
-            )
-            dataset.create_in_hdx(
-                remove_additional_resources=True,
-                match_resource_order=False,
-                hxl_update=False,
-                updated_by_script=_UPDATED_BY_SCRIPT,
-                batch=info["batch"],
-            )
+                # Steps to generate dataset
+                cod_population = CODPopulation(
+                    configuration, retriever, temp_dir, errors_on_exit
+                )
+                for iso3 in countryiso3s:
+                    cod_population.download_country_data(iso3)
+                dataset = cod_population.generate_dataset()
+                dataset.update_from_yaml(
+                    path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
+                )
+                dataset.create_in_hdx(
+                    remove_additional_resources=True,
+                    match_resource_order=False,
+                    hxl_update=False,
+                    updated_by_script=_UPDATED_BY_SCRIPT,
+                    batch=info["batch"],
+                )
+
+                if len(errors_on_exit.errors) > 0:
+                    errors = errors_on_exit.errors
+                    errors = ["The following errors were found"] + sorted(errors)
+                    with open("errors.txt", "w") as fp:
+                        fp.writelines(_ + " | " for _ in errors)
+                logger.info("Finished processing")
 
 
 if __name__ == "__main__":

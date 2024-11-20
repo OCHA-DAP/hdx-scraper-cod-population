@@ -13,6 +13,7 @@ from hdx.data.resource import Resource
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
+from hdx.utilities.errors_onexit import ErrorsOnExit
 from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
@@ -24,12 +25,14 @@ class CODPopulation:
         configuration: Configuration,
         retriever: Retrieve,
         temp_dir: str,
+        errors: ErrorsOnExit,
     ):
         self._configuration = configuration
         self._retriever = retriever
         self._temp_dir = temp_dir
         self.data = {}
         self.metadata = {}
+        self.errors = errors
         self._nonmatching_headers = {}
         self._year_sources = {}
 
@@ -66,7 +69,7 @@ class CODPopulation:
             if len(adm_resources) > 1:
                 adm_resources = _select_latest_resource(adm_resources)
             if len(adm_resources) > 1:
-                logger.error(f"{iso3}: more than one adm{admin_level} resource found")
+                self.errors.add(f"{iso3}: more than one adm{admin_level} resource found")
                 continue
             resource = adm_resources[0]
             url = resource["url"]
@@ -76,7 +79,7 @@ class CODPopulation:
             try:
                 headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
             except DownloadError:
-                logger.error(f"{iso3}: download failed for {resource['name']}")
+                self.errors.add(f"{iso3}: download failed for {resource['name']}")
                 continue
             # Find the correct p-code header and admin name headers
             adm_code_headers = {}
@@ -87,13 +90,13 @@ class CODPopulation:
                     headers, adm_level, self._configuration["non_latin_alphabets"]
                 )
                 if len(code_headers) == 0:
-                    logger.error(
+                    self.errors.add(
                         f"{iso3}: adm{adm_level} code header not found in adm{admin_level}"
                     )
                 else:
                     adm_code_headers[adm_level] = code_headers[0]
                 if len(name_headers) == 0:
-                    logger.error(
+                    self.errors.add(
                         f"{iso3}: adm{adm_level} name header not found in adm{admin_level}"
                     )
                 else:
@@ -152,7 +155,10 @@ class CODPopulation:
                     gender, age_range = _get_gender_and_age_range(header)
                     min_age, max_age = _get_min_and_max_age(age_range)
                     if max_age and min_age and max_age < min_age:
-                        logger.error(f"{iso3}: adm{adm_level} has weird header {header}")
+                        self.errors.add(
+                            f"{iso3}: adm{adm_level} has weird header {header}"
+                        )
+                        continue
 
                     population_values = {
                         "Population_group": header.upper(),
@@ -177,7 +183,9 @@ class CODPopulation:
 
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:
-            logger.error(f"{iso3} missing unexpected admin levels: {missing_levels}")
+            error_message = f"{iso3} missing unexpected admin levels: {missing_levels}"
+            if error_message not in self._configuration["known_errors"]:
+                self.errors.add(error_message)
 
     def generate_dataset(self):
         dataset = Dataset(

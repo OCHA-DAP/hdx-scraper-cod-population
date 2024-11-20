@@ -151,6 +151,8 @@ class CODPopulation:
                     population = int(float(population))
                     gender, age_range = _get_gender_and_age_range(header)
                     min_age, max_age = _get_min_and_max_age(age_range)
+                    if max_age and min_age and max_age < min_age:
+                        logger.error(f"{iso3}: adm{adm_level} has weird header {header}")
 
                     population_values = {
                         "Population_group": header.upper(),
@@ -261,6 +263,10 @@ def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
     if components[1] == "tl":
         age_range = "all"
         return gender, age_range
+    # header format: f_00 or m_100
+    if len(components) == 2 and len(components[1]) < 4:
+        components.append(components[1])
+    # header format: f_4045
     if len(components) == 2 and len(components[1]) == 4:
         components.append(components[1][-2:])
         components[1] = components[1][:2]

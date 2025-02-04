@@ -52,6 +52,7 @@ class CODPopulation:
         year_end = int(dataset.get_time_period(date_format="%Y")["enddate_str"])
         source = dataset["dataset_source"]
         organization = dataset.get_organization()["display_name"]
+        dataset_id = dataset["id"]
         dict_of_lists_add(self.metadata, "countries", iso3)
 
         missing_levels = []
@@ -75,6 +76,7 @@ class CODPopulation:
                 self.errors.add(f"{iso3}: more than one adm{admin_level} resource found")
                 continue
             resource = adm_resources[0]
+            resource_id = resource["id"]
             url = resource["url"]
             encoding = self._configuration["encoding_exceptions"].get(
                 resource["name"], "utf-8"
@@ -173,6 +175,8 @@ class CODPopulation:
                         "Reference_year": reference_year,
                         "Source": source,
                         "Contributor": organization,
+                        "dataset_id": dataset_id,
+                        "resource_id": resource_id,
                     }
                     population_row = {
                         "ISO3": iso3,
@@ -208,7 +212,7 @@ class CODPopulation:
             if error_message not in self._configuration["known_errors"]:
                 self.errors.add(error_message)
 
-    def generate_dataset(self):
+    def generate_dataset(self) -> Dataset:
         dataset = Dataset(
             {
                 "name": self._configuration["dataset_name"],
@@ -223,10 +227,11 @@ class CODPopulation:
         dataset["cod_level"] = "cod-standard"
 
         for admin_level, admin_data in self.data.items():
+            hxl_tags = self._configuration["hxl_tags"]
             dataset.generate_resource_from_iterable(
-                headers=list(admin_data[0].keys()),
+                headers=list(hxl_tags.keys()),
                 iterable=admin_data,
-                hxltags=self._configuration["hxl_tags"],
+                hxltags=hxl_tags,
                 folder=self._retriever.temp_dir,
                 filename=f"cod_population_admin{admin_level}.csv",
                 resourcedata={

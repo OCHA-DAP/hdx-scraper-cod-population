@@ -3,6 +3,7 @@ from os.path import join
 import pytest
 from hdx.api.configuration import Configuration
 from hdx.data.dataset import Dataset
+from hdx.utilities.compare import assert_files_same
 from hdx.utilities.downloader import Download
 from hdx.utilities.errors_onexit import ErrorsOnExit
 from hdx.utilities.path import temp_dir
@@ -88,6 +89,8 @@ class TestCODPopulation:
                     "Source": "Health Zone population statistics developed by the DRC IM "
                     "Working Group",
                     "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
+                    "dataset_id": "d1160fa9-1d58-4f96-9df5-edbff2e80895",
+                    "resource_id": "fa85e725-30c5-4f9a-aefc-2e8db0db36fa",
                 }
                 assert cod_population.data[1][0] == {
                     "ISO3": "CAF",
@@ -104,6 +107,8 @@ class TestCODPopulation:
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
                     "Contributor": "OCHA Central African Republic",
+                    "dataset_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
+                    "resource_id": "58403047-f30e-4719-94b0-8d6f7e0f6942",
                 }
                 assert cod_population.data[2][0] == {
                     "ISO3": "COD",
@@ -122,6 +127,8 @@ class TestCODPopulation:
                     "Source": "Health Zone population statistics developed by the DRC IM "
                     "Working Group",
                     "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
+                    "dataset_id": "d1160fa9-1d58-4f96-9df5-edbff2e80895",
+                    "resource_id": "bf8edc01-c28a-470d-9720-cb2d9435dfdf",
                 }
                 assert cod_population.data[3][0] == {
                     "ISO3": "CAF",
@@ -142,6 +149,8 @@ class TestCODPopulation:
                     "Source": "General Census of Population and Housing, Census Office "
                     "Central African Republic",
                     "Contributor": "OCHA Central African Republic",
+                    "dataset_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
+                    "resource_id": "17c5c468-fb12-4114-8286-3feb2069ab0a",
                 }
                 assert cod_population.metadata == {
                     "countries": ["CAF", "COD"],
@@ -195,3 +204,7 @@ class TestCODPopulation:
 
                 resources = dataset.get_resources()
                 assert len(resources) == 4
+                assert_files_same(
+                    join("tests", "fixtures", "cod_population_admin2.csv"),
+                    join(temp_folder, "cod_population_admin2.csv"),
+                )

@@ -56,18 +56,18 @@ class TestCODPopulation:
             "Test_cod_population",
             delete_on_success=True,
             delete_on_failure=False,
-        ) as tempdir:
+        ) as temp_folder:
             with Download(user_agent="test") as downloader:
                 retriever = Retrieve(
                     downloader=downloader,
-                    fallback_dir=tempdir,
+                    fallback_dir=temp_folder,
                     saved_dir=input_dir,
-                    temp_dir=tempdir,
+                    temp_dir=temp_folder,
                     save=False,
                     use_saved=True,
                 )
                 cod_population = CODPopulation(
-                    configuration, retriever, tempdir, ErrorsOnExit()
+                    configuration, retriever, temp_folder, ErrorsOnExit()
                 )
                 cod_population.download_country_data("CAF")
                 cod_population.download_country_data("COD")

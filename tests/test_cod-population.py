@@ -76,6 +76,9 @@ class TestCODPopulation:
                     assert len(cod_population.data) == 4
                     assert cod_population.data[0][0] == {
                         "ISO3": "COD",
+                        "has_hrp": True,
+                        "in_gho": True,
+                        "admin_level": 0,
                         "Country": "Democratic Republic of the Congo",
                         "ADM1_PCODE": None,
                         "ADM1_NAME": None,
@@ -100,6 +103,9 @@ class TestCODPopulation:
                     }
                     assert cod_population.data[1][0] == {
                         "ISO3": "CAF",
+                        "has_hrp": True,
+                        "in_gho": True,
+                        "admin_level": 1,
                         "Country": "Central African Republic",
                         "ADM1_PCODE": "CF11",
                         "ADM1_NAME": "Ombella M'Poko",
@@ -124,6 +130,9 @@ class TestCODPopulation:
                     }
                     assert cod_population.data[2][0] == {
                         "ISO3": "COD",
+                        "has_hrp": True,
+                        "in_gho": True,
+                        "admin_level": 2,
                         "Country": "Democratic Republic of the Congo",
                         "ADM1_PCODE": "CD10",
                         "ADM1_NAME": "Kinshasa",
@@ -148,6 +157,9 @@ class TestCODPopulation:
                     }
                     assert cod_population.data[3][0] == {
                         "ISO3": "CAF",
+                        "has_hrp": True,
+                        "in_gho": True,
+                        "admin_level": 3,
                         "Country": "Central African Republic",
                         "ADM1_PCODE": "CF11",
                         "ADM1_NAME": "Ombella M'Poko",
@@ -225,4 +237,64 @@ class TestCODPopulation:
                     assert_files_same(
                         join("tests", "fixtures", "cod_population_admin2.csv"),
                         join(temp_folder, "cod_population_admin2.csv"),
+                    )
+
+                    hapi_dataset = cod_population.generate_hapi_dataset()
+                    hapi_dataset.update_from_yaml(
+                        path=join(config_dir, "hdx_hapi_dataset_static.yaml")
+                    )
+                    assert hapi_dataset == {
+                        "name": "hdx-hapi-population-test",
+                        "title": "HDX HAPI - Geography & Infrastructure: Baseline Population",
+                        "groups": [{"name": "caf"}, {"name": "cod"}],
+                        "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",
+                        "tags": [
+                            {
+                                "name": "baseline population",
+                                "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                            },
+                            {
+                                "name": "sex and age disaggregated data-sadd",
+                                "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
+                            },
+                        ],
+                        "license_id": "cc-by",
+                        "methodology": "Registry",
+                        "caveats": "This dataset is refreshed daily, but the source datasets "
+                        "have different update schedules. Please refer to the [source "
+                        "datasets](https://data.humdata.org/dataset/?dataseries_name=COD+-+"
+                        "Subnational+Population+Statistics) to verify their specific update "
+                        "frequency.",
+                        "dataset_source": "Multiple sources",
+                        "package_creator": "HDX Data Systems Team",
+                        "private": False,
+                        "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
+                        "owner_org": "hdx-hapi",
+                        "data_update_frequency": 1,
+                        "notes": "This dataset contains data obtained from the [HDX "
+                        "Humanitarian API](https://hapi.humdata.org/) (HDX HAPI), which "
+                        "provides standardized humanitarian indicators designed for seamless "
+                        "interoperability from multiple sources. The data facilitates "
+                        "automated workflows and visualizations to support humanitarian "
+                        "decision making. For more information, please see the HDX HAPI "
+                        "[landing page](https://data.humdata.org/hapi) and [documentation]"
+                        "(https://hdx-hapi.readthedocs.io/en/latest/).\n",
+                        "subnational": "1",
+                        "dataset_preview": "no_preview",
+                    }
+                    assert hapi_dataset.get_resources() == [
+                        {
+                            "name": "Global Geography & Infrastructure: Baseline Population",
+                            "description": "Baseline Population data from HDX HAPI, please "
+                            "see [the documentation](https://hdx-hapi.readthedocs.io/en/latest"
+                            "/data_usage_guides/population_and_socio-economy/#baseline-"
+                            "population) for more information",
+                            "format": "csv",
+                            "resource_type": "file.upload",
+                            "url_type": "upload",
+                        }
+                    ]
+                    assert_files_same(
+                        join("tests", "fixtures", "hdx_hapi_population_global.csv"),
+                        join(temp_folder, "hdx_hapi_population_global.csv"),
                     )

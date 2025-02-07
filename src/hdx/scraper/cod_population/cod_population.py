@@ -11,8 +11,10 @@ from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.data.resource import Resource
+from hdx.location.adminlevel import AdminLevel
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
+from hdx.utilities.dateparse import parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
 from hdx.utilities.retriever import Retrieve
 
@@ -31,6 +33,7 @@ class CODPopulation:
         self._retriever = retriever
         self._temp_dir = temp_dir
         self._error_handler = error_handler
+        self._admins = []
         self.data = {}
         self.metadata = {}
         self.nonmatching_headers = {}
@@ -54,6 +57,9 @@ class CODPopulation:
         organization = dataset.get_organization()["display_name"]
         dataset_id = dataset["id"]
         dict_of_lists_add(self.metadata, "countries", iso3)
+
+        hrp = Country.get_hrp_status_from_iso3(iso3)
+        gho = Country.get_hrp_status_from_iso3(iso3)
 
         missing_levels = []
         for admin_level in range(0, 5):
@@ -194,6 +200,9 @@ class CODPopulation:
                     }
                     population_row = {
                         "ISO3": iso3,
+                        "has_hrp": hrp,
+                        "in_gho": gho,
+                        "admin_level": admin_level,
                         "Country": Country.get_country_name_from_iso3(iso3),
                     }
                     for adm_level in range(1, 5):
@@ -259,6 +268,85 @@ class CODPopulation:
                 },
                 encoding="utf-8-sig",
             )
+        return dataset
+
+    def get_pcodes(self) -> None:
+        for admin_level in [1, 2]:
+            admin = AdminLevel(admin_level=admin_level, retriever=self._retriever)
+            dataset = admin.get_libhxl_dataset(retriever=self._retriever)
+            admin.setup_from_libhxl_dataset(dataset)
+            admin.load_pcode_formats()
+            self._admins.append(admin)
+
+    def generate_hapi_dataset(self) -> Dataset:
+        # Set up admin levels and p-codes
+        self.get_pcodes()
+
+        dataset = Dataset(
+            {
+                "name": self._configuration["hapi_dataset_name"],
+                "title": self._configuration["hapi_dataset_title"],
+            }
+        )
+        dataset.add_country_locations(self.metadata["countries"])
+        year_start = min(self.metadata["reference_year"])
+        year_end = max(self.metadata["reference_year"])
+        dataset.set_time_period_year_range(year_start, year_end)
+        dataset.add_tags(self._configuration["tags"])
+
+        population_rows = []
+        for admin_level, admin_data in self.data.items():
+            if admin_level > 2:
+                continue
+            for row in admin_data:
+                row["location_code"] = row.pop("ISO3")
+                row["provider_admin1_name"] = row.pop("ADM1_NAME")
+                row["provider_admin2_name"] = row.pop("ADM2_NAME")
+                row["gender"] = row.pop("Gender")
+                row["age_range"] = row.pop("Age_range")
+                row["min_age"] = row.pop("Age_min")
+                row["max_age"] = row.pop("Age_max")
+                row["population"] = row.pop("Population")
+                start_date, end_date = parse_date_range(str(row["Reference_year"]))
+                row["reference_period_start"] = start_date
+                row["reference_period_end"] = end_date
+
+                # Check p-codes
+                if admin_level > 0:
+                    pcode = row[f"ADM{admin_level}_PCODE"]
+                    if pcode and pcode in self._admins[admin_level - 1].pcodes:
+                        row[f"admin{admin_level}_code"] = pcode
+                        row[f"admin{admin_level}_name"] = self._admins[
+                            admin_level - 1
+                        ].pcode_to_name.get(pcode)
+                        if admin_level == 2:
+                            adm1_pcode = self._admins[1].pcode_to_parent.get(pcode)
+                            adm1_name = self._admins[0].pcode_to_name.get(adm1_pcode)
+                            row["admin1_code"] = adm1_pcode
+                            row["admin1_name"] = adm1_name
+                    if not pcode:
+                        self._error_handler.add_missing_value_message(
+                            "Population",
+                            f"cod-ps-{row['location_code'].lower()}",
+                            f"admin {admin_level} pcode",
+                            row["ADM{admin_level}_NAME"],
+                        )
+
+                population_rows.append(row)
+
+        hxl_tags = self._configuration["hapi_hxl_tags"]
+        dataset.generate_resource_from_iterable(
+            headers=list(hxl_tags.keys()),
+            iterable=population_rows,
+            hxltags=hxl_tags,
+            folder=self._retriever.temp_dir,
+            filename="hdx_hapi_population_global.csv",
+            resourcedata={
+                "name": self._configuration["hapi_resource_name"],
+                "description": self._configuration["hapi_resource_description"],
+            },
+            encoding="utf-8-sig",
+        )
         return dataset
 
 

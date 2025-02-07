@@ -166,6 +166,14 @@ class CODPopulation:
                     population = row[header_i]
                     if population is None:
                         continue
+                    if population == "NA":
+                        population = 0
+                        self._error_handler.add_message(
+                            "Population",
+                            dataset_name,
+                            f"adm{adm_level} has NA population values",
+                            message_type="warning",
+                        )
                     if isinstance(population, str):
                         population = population.replace(",", "")
                     population = int(float(population))

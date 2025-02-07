@@ -72,12 +72,6 @@ def main(
                     updated_by_script=_UPDATED_BY_SCRIPT,
                 )
 
-                errors = error_handler.shared_errors["error"]
-                if len(errors) > 0:
-                    errors = ["The following errors were found"] + sorted(errors)
-                    with open("errors.txt", "w") as fp:
-                        fp.writelines(_ + " | " for _ in errors)
-
                 logger.info("Finished processing")
 
 

@@ -7,13 +7,13 @@ from typing import List, Tuple
 from unicodedata import normalize
 
 from hdx.api.configuration import Configuration
+from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.data.resource import Resource
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
-from hdx.utilities.errors_onexit import ErrorsOnExit
 from hdx.utilities.retriever import Retrieve
 
 logger = logging.getLogger(__name__)
@@ -25,16 +25,16 @@ class CODPopulation:
         configuration: Configuration,
         retriever: Retrieve,
         temp_dir: str,
-        errors: ErrorsOnExit,
+        error_handler: HDXErrorHandler,
     ):
         self._configuration = configuration
         self._retriever = retriever
         self._temp_dir = temp_dir
+        self._error_handler = error_handler
         self.data = {}
         self.metadata = {}
-        self.errors = errors
-        self._nonmatching_headers = {}
-        self._year_sources = {}
+        self.nonmatching_headers = {}
+        self.year_sources = {}
 
     def download_country_data(self, iso3: str) -> None:
         dataset_name = f"cod-ps-{iso3.lower()}"
@@ -73,7 +73,11 @@ class CODPopulation:
             if len(adm_resources) > 1:
                 adm_resources = _select_latest_resource(adm_resources)
             if len(adm_resources) > 1:
-                self.errors.add(f"{iso3}: more than one adm{admin_level} resource found")
+                self._error_handler.add_message(
+                    "Population",
+                    dataset_name,
+                    f"more than one adm{admin_level} resource found",
+                )
                 continue
             resource = adm_resources[0]
             resource_id = resource["id"]
@@ -84,7 +88,11 @@ class CODPopulation:
             try:
                 headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
             except DownloadError:
-                self.errors.add(f"{iso3}: download failed for {resource['name']}")
+                self._error_handler.add_message(
+                    "Population",
+                    dataset_name,
+                    f"download failed for {resource['name']}",
+                )
                 continue
             # Find the correct p-code header and admin name headers
             adm_code_headers = {}
@@ -95,14 +103,18 @@ class CODPopulation:
                     headers, adm_level, self._configuration["non_latin_alphabets"]
                 )
                 if len(code_headers) == 0:
-                    self.errors.add(
-                        f"{iso3}: adm{adm_level} code header not found in adm{admin_level}"
+                    self._error_handler.add_message(
+                        "Population",
+                        dataset_name,
+                        f"adm{adm_level} code header not found in adm{admin_level}",
                     )
                 else:
                     adm_code_headers[adm_level] = code_headers[0]
                 if len(name_headers) == 0:
-                    self.errors.add(
-                        f"{iso3}: adm{adm_level} name header not found in adm{admin_level}"
+                    self._error_handler.add_message(
+                        "Population",
+                        dataset_name,
+                        f"adm{adm_level} name header not found in adm{admin_level}",
                     )
                 else:
                     adm_name_headers[adm_level] = name_headers[0]
@@ -112,7 +124,7 @@ class CODPopulation:
             resource_year = _get_resource_year(resource["name"])
             date_header = headers.index("year") if "year" in headers else None
             if reference_year:
-                dict_of_sets_add(self._year_sources, iso3, "exception")
+                dict_of_sets_add(self.year_sources, iso3, "exception")
             for row in rows:
                 row_non_null = [r for r in row if r]
                 if "#" in row_non_null[0]:
@@ -120,13 +132,13 @@ class CODPopulation:
                 if not reference_year:
                     if date_header is not None:
                         reference_year = int(row[date_header])
-                        dict_of_sets_add(self._year_sources, iso3, "date header")
+                        dict_of_sets_add(self.year_sources, iso3, "date header")
                     elif resource_year != -1:
                         reference_year = resource_year
-                        dict_of_sets_add(self._year_sources, iso3, "resource name")
+                        dict_of_sets_add(self.year_sources, iso3, "resource name")
                     else:
                         reference_year = year_end
-                        dict_of_sets_add(self._year_sources, iso3, "dataset date")
+                        dict_of_sets_add(self.year_sources, iso3, "dataset date")
                 dict_of_sets_add(self.metadata, "reference_year", reference_year)
                 adm_codes = {}
                 adm_names = {}
@@ -149,7 +161,7 @@ class CODPopulation:
 
                 for header_i, header in enumerate(headers):
                     if not _match_population_header(header):
-                        dict_of_sets_add(self._nonmatching_headers, iso3, header)
+                        dict_of_sets_add(self.nonmatching_headers, iso3, header)
                         continue
                     population = row[header_i]
                     if population is None:
@@ -160,8 +172,10 @@ class CODPopulation:
                     gender, age_range = _get_gender_and_age_range(header)
                     min_age, max_age = _get_min_and_max_age(age_range)
                     if max_age and min_age and max_age < min_age:
-                        self.errors.add(
-                            f"{iso3}: adm{adm_level} has weird header {header}"
+                        self._error_handler.add_message(
+                            "Population",
+                            dataset_name,
+                            f"adm{adm_level} has weird header {header}",
                         )
                         continue
 
@@ -182,7 +196,7 @@ class CODPopulation:
                         "ISO3": iso3,
                         "Country": Country.get_country_name_from_iso3(iso3),
                     }
-                    for adm_level in range(1, admin_level + 1):
+                    for adm_level in range(1, 5):
                         population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(adm_level)
                         population_row[f"ADM{adm_level}_NAME"] = adm_names.get(adm_level)
                     population_row.update(population_values)
@@ -191,16 +205,17 @@ class CODPopulation:
                     country_key = tuple(
                         value
                         for key, value in population_row.items()
-                        if key
-                        not in ["Population", "Reference_year", "Source", "Contributor"]
+                        if key not in ["Population", "Reference_year", "Source", "Contributor"]
                     )
                     if country_key in country_keys:
                         duplicates += 1
                     country_keys.add(country_key)
 
             if duplicates > 0:
-                self.errors.add(
-                    f"{iso3}: {duplicates} duplicate values found in adm{admin_level}"
+                self._error_handler.add_message(
+                    "Population",
+                    dataset_name,
+                    f"{duplicates} duplicate values found in adm{admin_level}",
                 )
                 continue
             for population_row in population_rows:
@@ -208,9 +223,13 @@ class CODPopulation:
 
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:
-            error_message = f"{iso3} missing unexpected admin levels: {missing_levels}"
+            error_message = f"missing unexpected admin levels: {missing_levels}"
             if error_message not in self._configuration["known_errors"]:
-                self.errors.add(error_message)
+                self._error_handler.add_message(
+                    "Population",
+                    dataset_name,
+                    error_message,
+                )
 
     def generate_dataset(self) -> Dataset:
         dataset = Dataset(
@@ -245,9 +264,7 @@ class CODPopulation:
 
 def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
     pattern = f"adm(in)?{admin_level}_?p?code"
-    code_headers = [
-        header for header in headers if re.match(pattern, header, re.IGNORECASE)
-    ]
+    code_headers = [header for header in headers if re.match(pattern, header, re.IGNORECASE)]
     return code_headers
 
 
@@ -268,9 +285,7 @@ def _get_name_headers(
     if len(en_name_headers) == 1:
         return en_name_headers
     latin_name_headers = [
-        n
-        for n in name_headers
-        if n[-3] == "_" and n[-2:].lower() not in non_latin_alphabets
+        n for n in name_headers if n[-3] == "_" and n[-2:].lower() not in non_latin_alphabets
     ]
     if len(latin_name_headers) > 0:
         return latin_name_headers

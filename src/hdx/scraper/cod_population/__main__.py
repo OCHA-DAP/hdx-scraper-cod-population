@@ -9,10 +9,10 @@ import logging
 from os.path import dirname, expanduser, join
 
 from hdx.api.configuration import Configuration
+from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.facades.infer_arguments import facade
 from hdx.location.country import Country
 from hdx.utilities.downloader import Download
-from hdx.utilities.errors_onexit import ErrorsOnExit
 from hdx.utilities.path import temp_dir
 from hdx.utilities.retriever import Retrieve
 
@@ -28,17 +28,19 @@ _UPDATED_BY_SCRIPT = "HDX Scraper: cod-population"
 def main(
     save: bool = True,
     use_saved: bool = False,
+    err_to_hdx: bool = False,
 ) -> None:
     """Generate datasets and create them in HDX
 
     Args:
         save (bool): Save downloaded data. Defaults to True.
         use_saved (bool): Use saved data. Defaults to False.
+        err_to_hdx (bool): Whether to write any errors to HDX metadata. Defaults to False.
 
     Returns:
         None
     """
-    with ErrorsOnExit() as errors_on_exit:
+    with HDXErrorHandler(write_to_hdx=err_to_hdx) as error_handler:
         with temp_dir(folder=_USER_AGENT_LOOKUP) as temp_folder:
             with Download() as downloader:
                 retriever = Retrieve(
@@ -54,10 +56,11 @@ def main(
 
                 # Steps to generate dataset
                 cod_population = CODPopulation(
-                    configuration, retriever, temp_folder, errors_on_exit
+                    configuration, retriever, temp_folder, error_handler
                 )
                 for iso3 in countryiso3s:
                     cod_population.download_country_data(iso3)
+
                 dataset = cod_population.generate_dataset()
                 dataset.update_from_yaml(
                     path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
@@ -69,20 +72,20 @@ def main(
                     updated_by_script=_UPDATED_BY_SCRIPT,
                 )
 
-                if len(errors_on_exit.errors) > 0:
-                    errors = errors_on_exit.errors
+                errors = error_handler.shared_errors["error"]
+                if len(errors) > 0:
                     errors = ["The following errors were found"] + sorted(errors)
                     with open("errors.txt", "w") as fp:
                         fp.writelines(_ + " | " for _ in errors)
+
                 logger.info("Finished processing")
 
 
 if __name__ == "__main__":
     facade(
         main,
+        hdx_site="dev",
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
-        project_config_yaml=join(
-            dirname(__file__), "config", "project_configuration.yaml"
-        ),
+        project_config_yaml=join(dirname(__file__), "config", "project_configuration.yaml"),
     )

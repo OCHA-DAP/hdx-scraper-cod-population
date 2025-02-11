@@ -129,31 +129,31 @@ class TestCODPopulation:
                         "resource_id": "58403047-f30e-4719-94b0-8d6f7e0f6942",
                     }
                     assert cod_population.data[2][0] == {
-                        "ISO3": "COD",
+                        "ISO3": "CAF",
                         "has_hrp": True,
                         "in_gho": True,
                         "admin_level": 2,
-                        "Country": "Democratic Republic of the Congo",
-                        "ADM1_PCODE": "CD10",
-                        "ADM1_NAME": "Kinshasa",
-                        "ADM2_PCODE": "CD1000",
-                        "ADM2_NAME": "Kinshasa",
+                        "Country": "Central African Republic",
+                        "ADM1_PCODE": "CF22",
+                        "ADM1_NAME": "Nana Mambéré",
+                        "ADM2_PCODE": "CF224",
+                        "ADM2_NAME": "Abba",
                         "ADM3_PCODE": None,
                         "ADM3_NAME": None,
                         "ADM4_PCODE": None,
                         "ADM4_NAME": None,
-                        "Population_group": "F_00_04",
-                        "Gender": "f",
-                        "Age_range": "0-4",
-                        "Age_min": 0,
-                        "Age_max": 4,
-                        "Population": 1035155,
-                        "Reference_year": 2020,
-                        "Source": "Health Zone population statistics developed by the DRC IM "
-                        "Working Group",
-                        "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
-                        "dataset_id": "d1160fa9-1d58-4f96-9df5-edbff2e80895",
-                        "resource_id": "bf8edc01-c28a-470d-9720-cb2d9435dfdf",
+                        "Population_group": "T_TL",
+                        "Gender": "all",
+                        "Age_range": "all",
+                        "Age_min": None,
+                        "Age_max": None,
+                        "Population": 28016,
+                        "Reference_year": 2015,
+                        "Source": "General Census of Population and Housing, Census "
+                        "Office Central African Republic",
+                        "Contributor": "OCHA Central African Republic",
+                        "dataset_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
+                        "resource_id": "2b74b781-c889-4cb9-9624-418577809c1e",
                     }
                     assert cod_population.data[3][0] == {
                         "ISO3": "CAF",
@@ -234,10 +234,11 @@ class TestCODPopulation:
 
                     resources = dataset.get_resources()
                     assert len(resources) == 4
-                    assert_files_same(
-                        join("tests", "fixtures", "cod_population_admin2.csv"),
-                        join(temp_folder, "cod_population_admin2.csv"),
-                    )
+                    for i in range(0, 4):
+                        assert_files_same(
+                            join("tests", "fixtures", f"cod_population_admin{i}.csv"),
+                            join(temp_folder, f"cod_population_admin{i}.csv"),
+                        )
 
                     hapi_dataset = cod_population.generate_hapi_dataset()
                     hapi_dataset.update_from_yaml(

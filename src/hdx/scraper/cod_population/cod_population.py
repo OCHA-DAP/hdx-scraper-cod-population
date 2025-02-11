@@ -6,6 +6,7 @@ import re
 from typing import List, Tuple
 from unicodedata import normalize
 
+import numpy as np
 from hdx.api.configuration import Configuration
 from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.data.dataset import Dataset
@@ -17,6 +18,7 @@ from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dateparse import parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
 from hdx.utilities.retriever import Retrieve
+from pandas import DataFrame
 
 logger = logging.getLogger(__name__)
 
@@ -63,9 +65,6 @@ class CODPopulation:
 
         missing_levels = []
         for admin_level in range(0, 5):
-            population_rows = []
-            country_keys = set()
-            duplicates = 0
             # Find a csv resource for each admin level
             adm_resources = [
                 r
@@ -217,36 +216,16 @@ class CODPopulation:
                         population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(adm_level)
                         population_row[f"ADM{adm_level}_NAME"] = adm_names.get(adm_level)
                     population_row.update(population_values)
-                    population_rows.append(population_row)
-
-                    country_key = tuple(
-                        value
-                        for key, value in population_row.items()
-                        if key not in ["Population", "Reference_year", "Source", "Contributor"]
-                    )
-                    if country_key in country_keys:
-                        duplicates += 1
-                    country_keys.add(country_key)
-
-            if duplicates > 0:
-                self._error_handler.add_message(
-                    "Population",
-                    dataset_name,
-                    f"{duplicates} duplicate values found in adm{admin_level}",
-                )
-                continue
-            for population_row in population_rows:
-                dict_of_lists_add(self.data, admin_level, population_row)
+                    dict_of_lists_add(self.data, admin_level, population_row)
 
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:
             error_message = f"missing unexpected admin levels: {missing_levels}"
-            if error_message not in self._configuration["known_errors"]:
-                self._error_handler.add_message(
-                    "Population",
-                    dataset_name,
-                    error_message,
-                )
+            self._error_handler.add_message(
+                "Population",
+                dataset_name,
+                error_message,
+            )
 
     def generate_dataset(self) -> Dataset:
         dataset = Dataset(
@@ -306,15 +285,48 @@ class CODPopulation:
         for admin_level, admin_data in self.data.items():
             if admin_level > 2:
                 continue
+            admin_data = DataFrame(admin_data)
+            admin_data.replace(np.nan, None, inplace=True)
+            admin_data.rename(
+                columns={
+                    "ISO3": "location_code",
+                    "ADM1_NAME": "provider_admin1_name",
+                    "ADM2_NAME": "provider_admin2_name",
+                    "Gender": "gender",
+                    "Age_range": "age_range",
+                    "Age_min": "min_age",
+                    "Age_max": "max_age",
+                    "Population": "population",
+                },
+                inplace=True,
+            )
+
+            # check for duplicates
+            pcode_header = "location_code" if admin_level == 0 else f"ADM{admin_level}_PCODE"
+            subset = admin_data[
+                [
+                    pcode_header,
+                    "provider_admin1_name",
+                    "provider_admin2_name",
+                    "gender",
+                    "age_range",
+                ]
+            ]
+            duplicates = subset.duplicated(keep=False)
+            admin_data["error"] = None
+            admin_data.loc[duplicates, "error"] = "Duplicate row"
+            if sum(duplicates) > 0:
+                isos = admin_data.loc[duplicates, "location_code"]
+                isos = list(set(isos))
+                for iso in isos:
+                    self._error_handler.add_message(
+                        "Population",
+                        f"cod-ps-{iso.lower()}",
+                        f"Duplicates found at admin {admin_level}",
+                    )
+
+            admin_data = admin_data.to_dict("records")
             for row in admin_data:
-                row["location_code"] = row.pop("ISO3")
-                row["provider_admin1_name"] = row.pop("ADM1_NAME")
-                row["provider_admin2_name"] = row.pop("ADM2_NAME")
-                row["gender"] = row.pop("Gender")
-                row["age_range"] = row.pop("Age_range")
-                row["min_age"] = row.pop("Age_min")
-                row["max_age"] = row.pop("Age_max")
-                row["population"] = row.pop("Population")
                 start_date, end_date = parse_date_range(str(row["Reference_year"]))
                 row["reference_period_start"] = start_date
                 row["reference_period_end"] = end_date

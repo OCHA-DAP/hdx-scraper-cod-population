@@ -322,7 +322,23 @@ class CODPopulation:
                 # Check p-codes
                 if admin_level > 0:
                     pcode = row[f"ADM{admin_level}_PCODE"]
-                    if pcode and pcode in self._admins[admin_level - 1].pcodes:
+                    if not pcode:
+                        self._error_handler.add_missing_value_message(
+                            "Population",
+                            f"cod-ps-{row['location_code'].lower()}",
+                            f"admin {admin_level} pcode",
+                            row[f"ADM{admin_level}_NAME"],
+                        )
+                        row["warning"] = "Missing pcode!"
+                    elif pcode not in self._admins[admin_level - 1].pcodes:
+                        self._error_handler.add_missing_value_message(
+                            "Population",
+                            f"cod-ps-{row['location_code'].lower()}",
+                            f"admin {admin_level} pcode",
+                            pcode,
+                        )
+                        row["warning"] = f"Unknown pcode {pcode}!"
+                    else:
                         row[f"admin{admin_level}_code"] = pcode
                         row[f"admin{admin_level}_name"] = self._admins[
                             admin_level - 1
@@ -332,13 +348,6 @@ class CODPopulation:
                             adm1_name = self._admins[0].pcode_to_name.get(adm1_pcode)
                             row["admin1_code"] = adm1_pcode
                             row["admin1_name"] = adm1_name
-                    if not pcode:
-                        self._error_handler.add_missing_value_message(
-                            "Population",
-                            f"cod-ps-{row['location_code'].lower()}",
-                            f"admin {admin_level} pcode",
-                            row["ADM{admin_level}_NAME"],
-                        )
 
                 population_rows.append(row)
 

@@ -62,6 +62,8 @@ class CODPopulation:
 
         hrp = Country.get_hrp_status_from_iso3(iso3)
         gho = Country.get_hrp_status_from_iso3(iso3)
+        hrp = "Y" if hrp else "N"
+        gho = "Y" if gho else "N"
 
         missing_levels = []
         for admin_level in range(0, 5):

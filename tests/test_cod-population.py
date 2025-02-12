@@ -76,8 +76,8 @@ class TestCODPopulation:
                     assert len(cod_population.data) == 4
                     assert cod_population.data[0][0] == {
                         "ISO3": "COD",
-                        "has_hrp": True,
-                        "in_gho": True,
+                        "has_hrp": "Y",
+                        "in_gho": "Y",
                         "admin_level": 0,
                         "Country": "Democratic Republic of the Congo",
                         "ADM1_PCODE": None,
@@ -103,8 +103,8 @@ class TestCODPopulation:
                     }
                     assert cod_population.data[1][0] == {
                         "ISO3": "CAF",
-                        "has_hrp": True,
-                        "in_gho": True,
+                        "has_hrp": "Y",
+                        "in_gho": "Y",
                         "admin_level": 1,
                         "Country": "Central African Republic",
                         "ADM1_PCODE": "CF11",
@@ -130,8 +130,8 @@ class TestCODPopulation:
                     }
                     assert cod_population.data[2][0] == {
                         "ISO3": "CAF",
-                        "has_hrp": True,
-                        "in_gho": True,
+                        "has_hrp": "Y",
+                        "in_gho": "Y",
                         "admin_level": 2,
                         "Country": "Central African Republic",
                         "ADM1_PCODE": "CF22",
@@ -157,8 +157,8 @@ class TestCODPopulation:
                     }
                     assert cod_population.data[3][0] == {
                         "ISO3": "CAF",
-                        "has_hrp": True,
-                        "in_gho": True,
+                        "has_hrp": "Y",
+                        "in_gho": "Y",
                         "admin_level": 3,
                         "Country": "Central African Republic",
                         "ADM1_PCODE": "CF11",

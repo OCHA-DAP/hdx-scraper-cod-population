@@ -283,7 +283,8 @@ class CODPopulation:
         dataset.set_time_period_year_range(year_start, year_end)
         dataset.add_tags(self._configuration["tags"])
 
-        population_rows = []
+        population_rows_hrp = []
+        population_rows_non_hrp = []
         for admin_level, admin_data in self.data.items():
             if admin_level > 2:
                 continue
@@ -363,18 +364,33 @@ class CODPopulation:
                             row["admin1_code"] = adm1_pcode
                             row["admin1_name"] = adm1_name
 
-                population_rows.append(row)
+                if row["has_hrp"] == "Y":
+                    population_rows_hrp.append(row)
+                else:
+                    population_rows_non_hrp.append(row)
 
         hxl_tags = self._configuration["hapi_hxl_tags"]
         dataset.generate_resource_from_iterable(
             headers=list(hxl_tags.keys()),
-            iterable=population_rows,
+            iterable=population_rows_hrp,
             hxltags=hxl_tags,
             folder=self._retriever.temp_dir,
-            filename="hdx_hapi_population_global.csv",
+            filename="hdx_hapi_population_global_hrp.csv",
             resourcedata={
-                "name": self._configuration["hapi_resource_name"],
-                "description": self._configuration["hapi_resource_description"],
+                "name": self._configuration["hapi_resources"]["hrp"]["name"],
+                "description": self._configuration["hapi_resources"]["hrp"]["description"],
+            },
+            encoding="utf-8-sig",
+        )
+        dataset.generate_resource_from_iterable(
+            headers=list(hxl_tags.keys()),
+            iterable=population_rows_non_hrp,
+            hxltags=hxl_tags,
+            folder=self._retriever.temp_dir,
+            filename="hdx_hapi_population_global_non_hrp.csv",
+            resourcedata={
+                "name": self._configuration["hapi_resources"]["non_hrp"]["name"],
+                "description": self._configuration["hapi_resources"]["non_hrp"]["description"],
             },
             encoding="utf-8-sig",
         )

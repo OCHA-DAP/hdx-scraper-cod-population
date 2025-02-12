@@ -285,17 +285,18 @@ class TestCODPopulation:
                     }
                     assert hapi_dataset.get_resources() == [
                         {
-                            "name": "Global Geography & Infrastructure: Baseline Population",
-                            "description": "Baseline Population data from HDX HAPI, please "
-                            "see [the documentation](https://hdx-hapi.readthedocs.io/en/latest"
-                            "/data_usage_guides/population_and_socio-economy/#baseline-"
-                            "population) for more information",
+                            "name": "Global Geography & Infrastructure: Baseline Population "
+                            "(HRP countries)",
+                            "description": "Baseline Population data from HDX HAPI for HRP "
+                            "countries, please see [the documentation](https://hdx-hapi."
+                            "readthedocs.io/en/latest/data_usage_guides/population_and_socio-"
+                            "economy/#baseline-population) for more information",
                             "format": "csv",
                             "resource_type": "file.upload",
                             "url_type": "upload",
                         }
                     ]
                     assert_files_same(
-                        join("tests", "fixtures", "hdx_hapi_population_global.csv"),
-                        join(temp_folder, "hdx_hapi_population_global.csv"),
+                        join("tests", "fixtures", "hdx_hapi_population_global_hrp.csv"),
+                        join(temp_folder, "hdx_hapi_population_global_hrp.csv"),
                     )

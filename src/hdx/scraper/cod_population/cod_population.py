@@ -61,7 +61,7 @@ class CODPopulation:
         dict_of_lists_add(self.metadata, "countries", iso3)
 
         hrp = Country.get_hrp_status_from_iso3(iso3)
-        gho = Country.get_hrp_status_from_iso3(iso3)
+        gho = Country.get_gho_status_from_iso3(iso3)
         hrp = "Y" if hrp else "N"
         gho = "Y" if gho else "N"
 

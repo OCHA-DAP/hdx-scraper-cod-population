@@ -339,7 +339,7 @@ class CODPopulation:
                             "Population",
                             f"cod-ps-{row['location_code'].lower()}",
                             f"admin {admin_level} pcode",
-                            row[f"ADM{admin_level}_NAME"],
+                            row[f"provider_admin{admin_level}_name"],
                         )
                         row["warning"] = "Missing pcode!"
                     elif pcode not in self._admins[admin_level - 1].pcodes:

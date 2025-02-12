@@ -245,7 +245,7 @@ class TestCODPopulation:
                         path=join(config_dir, "hdx_hapi_dataset_static.yaml")
                     )
                     assert hapi_dataset == {
-                        "name": "hdx-hapi-population-test",
+                        "name": "hdx-hapi-baseline-population",
                         "title": "HDX HAPI - Geography & Infrastructure: Baseline Population",
                         "groups": [{"name": "caf"}, {"name": "cod"}],
                         "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",

@@ -2,7 +2,7 @@
 dataset_name: "cod-ps-global"
 dataset_title: "OCHA Global Subnational Population Statistics"
 
-hapi_dataset_name: "hdx-hapi-population-test"
+hapi_dataset_name: "hdx-hapi-baseline-population"
 hapi_dataset_title: "HDX HAPI - Geography & Infrastructure: Baseline Population"
 hapi_resource_name: "Global Geography & Infrastructure: Baseline Population"
 hapi_resource_description: "Baseline Population data from HDX HAPI, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/population_and_socio-economy/#baseline-population) for more information"

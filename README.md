@@ -3,8 +3,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/OCHA-DAP/hdx-scraper-cod-population/badge.svg?branch=main&ts=1)](https://coveralls.io/github/OCHA-DAP/hdx-scraper-cod-population?branch=main)
 
 This script extracts data from the COD population statistics datasets on HDX to
-create a global dataset. It makes several hundred read calls to HDX and one write.
-It is run every day.
+create a global dataset and a HAPI dataset. It makes several hundred read calls
+to HDX and two writes. It is run every day.
 
 ## Development
 

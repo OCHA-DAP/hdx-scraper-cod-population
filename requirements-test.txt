@@ -157,7 +157,7 @@ num2words==0.5.14
     # via
     #   -c requirements.txt
     #   quantulum3
-numpy==2.2.2
+numpy==2.2.3
     # via
     #   -c requirements.txt
     #   pandas

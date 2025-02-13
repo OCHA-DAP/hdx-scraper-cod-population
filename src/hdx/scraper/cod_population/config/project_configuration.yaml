@@ -2,6 +2,17 @@
 dataset_name: "cod-ps-global"
 dataset_title: "OCHA Global Subnational Population Statistics"
 
+hapi_dataset_name: "hdx-hapi-population"
+hapi_dataset_title: "HDX HAPI - Geography & Infrastructure: Baseline Population"
+
+hapi_resources:
+  hrp:
+    name: "Global Geography & Infrastructure: Baseline Population (HRP countries)"
+    description: "Baseline Population data from HDX HAPI for HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/population_and_socio-economy/#baseline-population) for more information"
+  non_hrp:
+    name: "Global Geography & Infrastructure: Baseline Population (Non-HRP countries)"
+    description: "Baseline Population data from HDX HAPI for non-HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/population_and_socio-economy/#baseline-population) for more information"
+
 tags:
   - "baseline population"
   - "sex and age disaggregated data-sadd"
@@ -26,6 +37,29 @@ hxl_tags:
   "Reference_year": "#date+year"
   "Source": "#meta+source"
   "Contributor": "#meta+contributor"
+
+hapi_hxl_tags:
+  location_code: "#country+code"
+  has_hrp: "#meta+has_hrp"
+  in_gho: "#meta+in_gho"
+  provider_admin1_name: "#adm1+name+provider"
+  provider_admin2_name: "#adm2+name+provider"
+  admin1_code: "#adm1+code"
+  admin1_name: "#adm1+name"
+  admin2_code: "#adm2+code"
+  admin2_name: "#adm2+name"
+  admin_level: "#adm+level"
+  gender: "#gender+code"
+  age_range: "#age+range"
+  min_age: "#age+min"
+  max_age: "#age+max"
+  population: "#population"
+  reference_period_start: "#date+start"
+  reference_period_end: "#date+end"
+  dataset_id: "#meta+dataset_id"
+  resource_id: "#meta+resource_id"
+  warning: "#meta+warning"
+  error: "#meta+error"
 
 encoding_exceptions:
   "ago_admpop_adm2_2024.csv": "latin-1"

@@ -6,15 +6,19 @@ import re
 from typing import List, Tuple
 from unicodedata import normalize
 
+import numpy as np
 from hdx.api.configuration import Configuration
 from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.data.dataset import Dataset
 from hdx.data.hdxobject import HDXError
 from hdx.data.resource import Resource
+from hdx.location.adminlevel import AdminLevel
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
+from hdx.utilities.dateparse import parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
 from hdx.utilities.retriever import Retrieve
+from pandas import DataFrame
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +35,7 @@ class CODPopulation:
         self._retriever = retriever
         self._temp_dir = temp_dir
         self._error_handler = error_handler
+        self._admins = []
         self.data = {}
         self.metadata = {}
         self.nonmatching_headers = {}
@@ -55,11 +60,13 @@ class CODPopulation:
         dataset_id = dataset["id"]
         dict_of_lists_add(self.metadata, "countries", iso3)
 
+        hrp = Country.get_hrp_status_from_iso3(iso3)
+        gho = Country.get_gho_status_from_iso3(iso3)
+        hrp = "Y" if hrp else "N"
+        gho = "Y" if gho else "N"
+
         missing_levels = []
         for admin_level in range(0, 5):
-            population_rows = []
-            country_keys = set()
-            duplicates = 0
             # Find a csv resource for each admin level
             adm_resources = [
                 r
@@ -202,42 +209,25 @@ class CODPopulation:
                     }
                     population_row = {
                         "ISO3": iso3,
+                        "has_hrp": hrp,
+                        "in_gho": gho,
+                        "admin_level": admin_level,
                         "Country": Country.get_country_name_from_iso3(iso3),
                     }
                     for adm_level in range(1, 5):
                         population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(adm_level)
                         population_row[f"ADM{adm_level}_NAME"] = adm_names.get(adm_level)
                     population_row.update(population_values)
-                    population_rows.append(population_row)
-
-                    country_key = tuple(
-                        value
-                        for key, value in population_row.items()
-                        if key not in ["Population", "Reference_year", "Source", "Contributor"]
-                    )
-                    if country_key in country_keys:
-                        duplicates += 1
-                    country_keys.add(country_key)
-
-            if duplicates > 0:
-                self._error_handler.add_message(
-                    "Population",
-                    dataset_name,
-                    f"{duplicates} duplicate values found in adm{admin_level}",
-                )
-                continue
-            for population_row in population_rows:
-                dict_of_lists_add(self.data, admin_level, population_row)
+                    dict_of_lists_add(self.data, admin_level, population_row)
 
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:
             error_message = f"missing unexpected admin levels: {missing_levels}"
-            if error_message not in self._configuration["known_errors"]:
-                self._error_handler.add_message(
-                    "Population",
-                    dataset_name,
-                    error_message,
-                )
+            self._error_handler.add_message(
+                "Population",
+                dataset_name,
+                error_message,
+            )
 
     def generate_dataset(self) -> Dataset:
         dataset = Dataset(
@@ -267,6 +257,143 @@ class CODPopulation:
                 },
                 encoding="utf-8-sig",
             )
+        return dataset
+
+    def get_pcodes(self) -> None:
+        for admin_level in [1, 2]:
+            admin = AdminLevel(admin_level=admin_level, retriever=self._retriever)
+            dataset = admin.get_libhxl_dataset(retriever=self._retriever)
+            admin.setup_from_libhxl_dataset(dataset)
+            admin.load_pcode_formats()
+            self._admins.append(admin)
+
+    def generate_hapi_dataset(self) -> Dataset:
+        # Set up admin levels and p-codes
+        self.get_pcodes()
+
+        dataset = Dataset(
+            {
+                "name": self._configuration["hapi_dataset_name"],
+                "title": self._configuration["hapi_dataset_title"],
+            }
+        )
+        dataset.add_country_locations(self.metadata["countries"])
+        year_start = min(self.metadata["reference_year"])
+        year_end = max(self.metadata["reference_year"])
+        dataset.set_time_period_year_range(year_start, year_end)
+        dataset.add_tags(self._configuration["tags"])
+
+        population_rows_hrp = []
+        population_rows_non_hrp = []
+        for admin_level, admin_data in self.data.items():
+            if admin_level > 2:
+                continue
+            admin_data = DataFrame(admin_data)
+            admin_data.replace(np.nan, None, inplace=True)
+            admin_data.rename(
+                columns={
+                    "ISO3": "location_code",
+                    "ADM1_NAME": "provider_admin1_name",
+                    "ADM2_NAME": "provider_admin2_name",
+                    "Gender": "gender",
+                    "Age_range": "age_range",
+                    "Age_min": "min_age",
+                    "Age_max": "max_age",
+                    "Population": "population",
+                },
+                inplace=True,
+            )
+
+            # check for duplicates
+            pcode_header = "location_code" if admin_level == 0 else f"ADM{admin_level}_PCODE"
+            subset = admin_data[
+                [
+                    pcode_header,
+                    "provider_admin1_name",
+                    "provider_admin2_name",
+                    "gender",
+                    "age_range",
+                ]
+            ]
+            duplicates = subset.duplicated(keep=False)
+            admin_data["error"] = None
+            admin_data.loc[duplicates, "error"] = "Duplicate row"
+            if sum(duplicates) > 0:
+                isos = admin_data.loc[duplicates, "location_code"]
+                isos = list(set(isos))
+                for iso in isos:
+                    self._error_handler.add_message(
+                        "Population",
+                        f"cod-ps-{iso.lower()}",
+                        f"Duplicates found at admin {admin_level}",
+                    )
+
+            admin_data = admin_data.to_dict("records")
+            for row in admin_data:
+                start_date, end_date = parse_date_range(str(row["Reference_year"]))
+                row["reference_period_start"] = start_date
+                row["reference_period_end"] = end_date
+
+                # Check p-codes
+                if admin_level > 0:
+                    pcode = row[f"ADM{admin_level}_PCODE"]
+                    if not pcode:
+                        self._error_handler.add_missing_value_message(
+                            "Population",
+                            f"cod-ps-{row['location_code'].lower()}",
+                            f"admin {admin_level} pcode",
+                            row[f"provider_admin{admin_level}_name"],
+                        )
+                        row["warning"] = "Missing pcode!"
+                    elif pcode not in self._admins[admin_level - 1].pcodes:
+                        self._error_handler.add_missing_value_message(
+                            "Population",
+                            f"cod-ps-{row['location_code'].lower()}",
+                            f"admin {admin_level} pcode",
+                            pcode,
+                        )
+                        row["warning"] = f"Unknown pcode {pcode}!"
+                    else:
+                        row[f"admin{admin_level}_code"] = pcode
+                        row[f"admin{admin_level}_name"] = self._admins[
+                            admin_level - 1
+                        ].pcode_to_name.get(pcode)
+                        if admin_level == 2:
+                            adm1_pcode = self._admins[1].pcode_to_parent.get(pcode)
+                            adm1_name = self._admins[0].pcode_to_name.get(adm1_pcode)
+                            row["admin1_code"] = adm1_pcode
+                            row["admin1_name"] = adm1_name
+
+                if row["has_hrp"] == "Y":
+                    population_rows_hrp.append(row)
+                else:
+                    population_rows_non_hrp.append(row)
+
+        hxl_tags = self._configuration["hapi_hxl_tags"]
+        dataset.generate_resource_from_iterable(
+            headers=list(hxl_tags.keys()),
+            iterable=population_rows_hrp,
+            hxltags=hxl_tags,
+            folder=self._retriever.temp_dir,
+            filename="hdx_hapi_population_global_hrp.csv",
+            resourcedata={
+                "name": self._configuration["hapi_resources"]["hrp"]["name"],
+                "description": self._configuration["hapi_resources"]["hrp"]["description"],
+            },
+            encoding="utf-8-sig",
+        )
+        dataset.generate_resource_from_iterable(
+            headers=list(hxl_tags.keys()),
+            iterable=population_rows_non_hrp,
+            hxltags=hxl_tags,
+            folder=self._retriever.temp_dir,
+            filename="hdx_hapi_population_global_non_hrp.csv",
+            resourcedata={
+                "name": self._configuration["hapi_resources"]["non_hrp"]["name"],
+                "description": self._configuration["hapi_resources"]["non_hrp"]["description"],
+            },
+            encoding="utf-8-sig",
+        )
         return dataset
 
 

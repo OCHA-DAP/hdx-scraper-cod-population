@@ -71,12 +71,12 @@ def main(
                     path=join(dirname(__file__), "config", "hdx_hapi_dataset_static.yaml")
                 )
 
-                dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    hxl_update=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                )
+                # dataset.create_in_hdx(
+                #     remove_additional_resources=True,
+                #     match_resource_order=False,
+                #     hxl_update=False,
+                #     updated_by_script=_UPDATED_BY_SCRIPT,
+                # )
 
                 hapi_dataset.create_in_hdx(
                     remove_additional_resources=True,

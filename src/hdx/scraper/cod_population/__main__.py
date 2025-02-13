@@ -85,6 +85,8 @@ def main(
                     updated_by_script=_UPDATED_BY_SCRIPT,
                 )
 
+                logger.info("Finished processing")
+
 
 if __name__ == "__main__":
     facade(

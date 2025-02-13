@@ -56,8 +56,8 @@ hapi_hxl_tags:
   population: "#population"
   reference_period_start: "#date+start"
   reference_period_end: "#date+end"
-  dataset_id: "#meta+dataset_id"
-  resource_id: "#meta+resource_id"
+  dataset_hdx_id: "#meta+dataset_id"
+  resource_hdx_id: "#meta+resource_id"
   warning: "#meta+warning"
   error: "#meta+error"
 

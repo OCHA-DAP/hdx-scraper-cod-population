@@ -204,8 +204,8 @@ class CODPopulation:
                         "Reference_year": reference_year,
                         "Source": source,
                         "Contributor": organization,
-                        "dataset_id": dataset_id,
-                        "resource_id": resource_id,
+                        "dataset_hdx_id": dataset_id,
+                        "resource_hdx_id": resource_id,
                     }
                     population_row = {
                         "ISO3": iso3,

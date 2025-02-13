@@ -98,8 +98,8 @@ class TestCODPopulation:
                         "Source": "Health Zone population statistics developed by the DRC IM "
                         "Working Group",
                         "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
-                        "dataset_id": "d1160fa9-1d58-4f96-9df5-edbff2e80895",
-                        "resource_id": "fa85e725-30c5-4f9a-aefc-2e8db0db36fa",
+                        "dataset_hdx_id": "d1160fa9-1d58-4f96-9df5-edbff2e80895",
+                        "resource_hdx_id": "fa85e725-30c5-4f9a-aefc-2e8db0db36fa",
                     }
                     assert cod_population.data[1][0] == {
                         "ISO3": "CAF",
@@ -125,8 +125,8 @@ class TestCODPopulation:
                         "Source": "General Census of Population and Housing, Census Office "
                         "Central African Republic",
                         "Contributor": "OCHA Central African Republic",
-                        "dataset_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
-                        "resource_id": "58403047-f30e-4719-94b0-8d6f7e0f6942",
+                        "dataset_hdx_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
+                        "resource_hdx_id": "58403047-f30e-4719-94b0-8d6f7e0f6942",
                     }
                     assert cod_population.data[2][0] == {
                         "ISO3": "CAF",
@@ -152,8 +152,8 @@ class TestCODPopulation:
                         "Source": "General Census of Population and Housing, Census "
                         "Office Central African Republic",
                         "Contributor": "OCHA Central African Republic",
-                        "dataset_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
-                        "resource_id": "2b74b781-c889-4cb9-9624-418577809c1e",
+                        "dataset_hdx_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
+                        "resource_hdx_id": "2b74b781-c889-4cb9-9624-418577809c1e",
                     }
                     assert cod_population.data[3][0] == {
                         "ISO3": "CAF",
@@ -179,8 +179,8 @@ class TestCODPopulation:
                         "Source": "General Census of Population and Housing, Census Office "
                         "Central African Republic",
                         "Contributor": "OCHA Central African Republic",
-                        "dataset_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
-                        "resource_id": "17c5c468-fb12-4114-8286-3feb2069ab0a",
+                        "dataset_hdx_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
+                        "resource_hdx_id": "17c5c468-fb12-4114-8286-3feb2069ab0a",
                     }
                     assert cod_population.metadata == {
                         "countries": ["CAF", "COD"],

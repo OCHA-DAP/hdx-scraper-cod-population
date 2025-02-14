@@ -344,16 +344,24 @@ class CODPopulation:
                             f"admin {admin_level} pcode",
                             row[f"provider_admin{admin_level}_name"],
                         )
-                        row["warning"] = "Missing pcode!"
+                        row["warning"] = "Missing pcode"
                     elif pcode not in self._admins[admin_level - 1].pcodes:
-                        self._error_handler.add_missing_value_message(
-                            "Population",
-                            f"cod-ps-{row['location_code'].lower()}",
-                            f"admin {admin_level} pcode",
-                            pcode,
-                        )
-                        row["warning"] = f"Unknown pcode {pcode}!"
-                    else:
+                        parent_pcode = row.get(f"ADM{admin_level-1}_PCODE") or None
+                        matched_pcode = self._admins[
+                            admin_level - 1
+                        ].convert_admin_pcode_length(iso, pcode, parent=parent_pcode)
+                        if matched_pcode:
+                            row["warning"] = f"Pcode unknown {pcode}->{matched_pcode}"
+                            pcode = matched_pcode
+                        else:
+                            self._error_handler.add_missing_value_message(
+                                "Population",
+                                f"cod-ps-{row['location_code'].lower()}",
+                                f"admin {admin_level} pcode",
+                                pcode,
+                            )
+                            row["warning"] = f"Pcode unknown {pcode}"
+                    if pcode in self._admins[admin_level - 1].pcodes:
                         row[f"admin{admin_level}_code"] = pcode
                         row[f"admin{admin_level}_name"] = self._admins[
                             admin_level - 1

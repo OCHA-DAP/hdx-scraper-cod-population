@@ -14,6 +14,7 @@ from hdx.data.hdxobject import HDXError
 from hdx.data.resource import Resource
 from hdx.location.adminlevel import AdminLevel
 from hdx.location.country import Country
+from hdx.scraper.framework.utilities.hapi_admins import complete_admins
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dateparse import iso_string_from_datetime, parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
@@ -336,41 +337,33 @@ class CODPopulation:
 
                 # Check p-codes
                 if admin_level > 0:
-                    pcode = row[f"ADM{admin_level}_PCODE"]
-                    if not pcode:
-                        self._error_handler.add_missing_value_message(
+                    country_iso = row["location_code"]
+                    provider_adm_names = [
+                        row["provider_admin1_name"],
+                        row["provider_admin2_name"],
+                    ]
+                    adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
+                    adm_names = ["", ""]
+                    adm_level, warnings = complete_admins(
+                        self._admins,
+                        country_iso,
+                        provider_adm_names,
+                        adm_codes,
+                        adm_names,
+                        fuzzy_match=False,
+                    )
+                    for warning in warnings:
+                        self._error_handler.add_message(
                             "Population",
-                            f"cod-ps-{row['location_code'].lower()}",
-                            f"admin {admin_level} pcode",
-                            row[f"provider_admin{admin_level}_name"],
+                            f"cod-ps-{country_iso.lower()}",
+                            warning,
+                            message_type="warning",
                         )
-                        row["warning"] = "Missing pcode"
-                    elif pcode not in self._admins[admin_level - 1].pcodes:
-                        parent_pcode = row.get(f"ADM{admin_level-1}_PCODE") or None
-                        matched_pcode = self._admins[
-                            admin_level - 1
-                        ].convert_admin_pcode_length(iso, pcode, parent=parent_pcode)
-                        if matched_pcode:
-                            row["warning"] = f"Pcode unknown {pcode}->{matched_pcode}"
-                            pcode = matched_pcode
-                        else:
-                            self._error_handler.add_missing_value_message(
-                                "Population",
-                                f"cod-ps-{row['location_code'].lower()}",
-                                f"admin {admin_level} pcode",
-                                pcode,
-                            )
-                            row["warning"] = f"Pcode unknown {pcode}"
-                    if pcode in self._admins[admin_level - 1].pcodes:
-                        row[f"admin{admin_level}_code"] = pcode
-                        row[f"admin{admin_level}_name"] = self._admins[
-                            admin_level - 1
-                        ].pcode_to_name.get(pcode)
-                        if admin_level == 2:
-                            adm1_pcode = self._admins[1].pcode_to_parent.get(pcode)
-                            adm1_name = self._admins[0].pcode_to_name.get(adm1_pcode)
-                            row["admin1_code"] = adm1_pcode
-                            row["admin1_name"] = adm1_name
+                    row["admin1_code"] = adm_codes[0]
+                    row["admin2_code"] = adm_codes[1]
+                    row["admin1_name"] = adm_names[0]
+                    row["admin2_name"] = adm_names[1]
+                    row["warning"] = "|".join(warnings)
 
                 if row["has_hrp"] == "Y":
                     population_rows_hrp.append(row)

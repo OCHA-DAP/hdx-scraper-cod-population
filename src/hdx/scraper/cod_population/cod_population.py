@@ -15,7 +15,7 @@ from hdx.data.resource import Resource
 from hdx.location.adminlevel import AdminLevel
 from hdx.location.country import Country
 from hdx.utilities.base_downloader import DownloadError
-from hdx.utilities.dateparse import parse_date_range
+from hdx.utilities.dateparse import iso_string_from_datetime, parse_date_range
 from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
 from hdx.utilities.retriever import Retrieve
 from pandas import DataFrame
@@ -331,8 +331,8 @@ class CODPopulation:
             admin_data = admin_data.to_dict("records")
             for row in admin_data:
                 start_date, end_date = parse_date_range(str(row["Reference_year"]))
-                row["reference_period_start"] = start_date
-                row["reference_period_end"] = end_date
+                row["reference_period_start"] = iso_string_from_datetime(start_date)
+                row["reference_period_end"] = iso_string_from_datetime(end_date)
 
                 # Check p-codes
                 if admin_level > 0:

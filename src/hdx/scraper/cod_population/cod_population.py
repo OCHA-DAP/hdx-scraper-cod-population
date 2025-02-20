@@ -344,14 +344,18 @@ class CODPopulation:
                     ]
                     adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
                     adm_names = ["", ""]
-                    adm_level, warnings = complete_admins(
-                        self._admins,
-                        country_iso,
-                        provider_adm_names,
-                        adm_codes,
-                        adm_names,
-                        fuzzy_match=False,
-                    )
+                    try:
+                        adm_level, warnings = complete_admins(
+                            self._admins,
+                            country_iso,
+                            provider_adm_names,
+                            adm_codes,
+                            adm_names,
+                            fuzzy_match=False,
+                        )
+                    except IndexError:
+                        adm_codes = ["", ""]
+                        warnings = [f"PCode unknown {adm_codes[1]}->''"]
                     for warning in warnings:
                         self._error_handler.add_message(
                             "Population",

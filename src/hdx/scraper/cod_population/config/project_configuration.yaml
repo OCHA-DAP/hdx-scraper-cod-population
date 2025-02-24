@@ -8,10 +8,10 @@ hapi_dataset_title: "HDX HAPI - Geography & Infrastructure: Baseline Population"
 hapi_resources:
   hrp:
     name: "Global Geography & Infrastructure: Baseline Population (HRP countries)"
-    description: "Baseline Population data from HDX HAPI for HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/population_and_socio-economy/#baseline-population) for more information"
+    description: "Baseline Population data from HDX HAPI for HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/geography_and_infrastructure/#baseline-population) for more information"
   non_hrp:
     name: "Global Geography & Infrastructure: Baseline Population (Non-HRP countries)"
-    description: "Baseline Population data from HDX HAPI for non-HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/population_and_socio-economy/#baseline-population) for more information"
+    description: "Baseline Population data from HDX HAPI for non-HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/geography_and_infrastructure/#baseline-population) for more information"
 
 tags:
   - "baseline population"

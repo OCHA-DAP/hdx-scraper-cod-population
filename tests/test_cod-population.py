@@ -289,8 +289,8 @@ class TestCODPopulation:
                             "(HRP countries)",
                             "description": "Baseline Population data from HDX HAPI for HRP "
                             "countries, please see [the documentation](https://hdx-hapi."
-                            "readthedocs.io/en/latest/data_usage_guides/population_and_socio-"
-                            "economy/#baseline-population) for more information",
+                            "readthedocs.io/en/latest/data_usage_guides/geography_and_"
+                            "infrastructure/#baseline-population) for more information",
                             "format": "csv",
                             "resource_type": "file.upload",
                             "url_type": "upload",

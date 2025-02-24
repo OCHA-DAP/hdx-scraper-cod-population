@@ -335,9 +335,6 @@ class CODPopulation:
                 row["reference_period_start"] = iso_string_from_datetime(start_date)
                 row["reference_period_end"] = iso_string_from_datetime(end_date)
 
-                row["min_age"] = None if row["min_age"] is None else float(row["min_age"])
-                row["max_age"] = None if row["max_age"] is None else float(row["max_age"])
-
                 # Check p-codes
                 if admin_level > 0:
                     country_iso = row["location_code"]

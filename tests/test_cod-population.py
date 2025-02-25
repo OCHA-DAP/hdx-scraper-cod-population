@@ -188,13 +188,11 @@ class TestCODPopulation:
                     }
 
                     dataset = cod_population.generate_dataset()
-                    dataset.update_from_yaml(path=join(config_dir, "hdx_dataset_static.yaml"))
                     assert dataset == {
                         "name": "cod-ps-global",
                         "title": "OCHA Global Subnational Population Statistics",
                         "groups": [{"name": "caf"}, {"name": "cod"}],
                         "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",
-                        "dataset_source": "Multiple sources",
                         "cod_level": "cod-standard",
                         "tags": [
                             {
@@ -206,30 +204,6 @@ class TestCODPopulation:
                                 "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
                             },
                         ],
-                        "license_id": "cc-by",
-                        "methodology": "Other",
-                        "methodology_other": "Compiled daily from individual COD population "
-                        "statistics files. Please refer to the [source datasets](https://data."
-                        "humdata.org/dataset/?dataseries_name=COD+-+Subnational+Population+"
-                        "Statistics) to learn more about their specific methodologies.",
-                        "caveats": "This dataset is refreshed daily, but the source datasets "
-                        "have different update schedules. Please refer to the [source datasets"
-                        "](https://data.humdata.org/dataset/?dataseries_name=COD+-+Subnational+"
-                        "Population+Statistics) to verify their specific update frequency.",
-                        "package_creator": "HDX Data Systems Team",
-                        "private": False,
-                        "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
-                        "owner_org": "hdx",
-                        "data_update_frequency": 1,
-                        "notes": "Latest COD population statistics compiled at the admin "
-                        "level. The CSV files contain subnational p-codes, their "
-                        "corresponding administrative names, source organization, and "
-                        "reference dates where available. These are constructed from "
-                        "individual country level population files, which can be found "
-                        "using [this search](https://data.humdata.org/dataset/?dataseries_name"
-                        "=COD+-+Subnational+Population+Statistics) on HDX.",
-                        "subnational": "1",
-                        "dataset_preview": "no_preview",
                     }
 
                     resources = dataset.get_resources()
@@ -241,9 +215,6 @@ class TestCODPopulation:
                         )
 
                     hapi_dataset = cod_population.generate_hapi_dataset()
-                    hapi_dataset.update_from_yaml(
-                        path=join(config_dir, "hdx_hapi_dataset_static.yaml")
-                    )
                     assert hapi_dataset == {
                         "name": "hdx-hapi-population",
                         "title": "HDX HAPI - Geography & Infrastructure: Baseline Population",
@@ -259,29 +230,6 @@ class TestCODPopulation:
                                 "vocabulary_id": "b891512e-9516-4bf5-962a-7a289772a2a1",
                             },
                         ],
-                        "license_id": "cc-by",
-                        "methodology": "Registry",
-                        "caveats": "This dataset is refreshed daily, but the source datasets "
-                        "have different update schedules. Please refer to the [source "
-                        "datasets](https://data.humdata.org/dataset/?dataseries_name=COD+-+"
-                        "Subnational+Population+Statistics) to verify their specific update "
-                        "frequency.",
-                        "dataset_source": "Multiple sources",
-                        "package_creator": "HDX Data Systems Team",
-                        "private": False,
-                        "maintainer": "aa13de36-28c5-47a7-8d0b-6d7c754ba8c8",
-                        "owner_org": "hdx-hapi",
-                        "data_update_frequency": 1,
-                        "notes": "This dataset contains data obtained from the [HDX "
-                        "Humanitarian API](https://hapi.humdata.org/) (HDX HAPI), which "
-                        "provides standardized humanitarian indicators designed for seamless "
-                        "interoperability from multiple sources. The data facilitates "
-                        "automated workflows and visualizations to support humanitarian "
-                        "decision making. For more information, please see the HDX HAPI "
-                        "[landing page](https://data.humdata.org/hapi) and [documentation]"
-                        "(https://hdx-hapi.readthedocs.io/en/latest/).\n",
-                        "subnational": "1",
-                        "dataset_preview": "no_preview",
                     }
                     assert hapi_dataset.get_resources() == [
                         {

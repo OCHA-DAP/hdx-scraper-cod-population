@@ -17,7 +17,7 @@ from hdx.location.country import Country
 from hdx.scraper.framework.utilities.hapi_admins import complete_admins
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dateparse import iso_string_from_datetime, parse_date_range
-from hdx.utilities.dictandlist import dict_of_lists_add, dict_of_sets_add
+from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add, dict_of_sets_add
 from hdx.utilities.retriever import Retrieve
 from pandas import DataFrame
 
@@ -89,6 +89,10 @@ class CODPopulation:
                 continue
             resource = adm_resources[0]
             resource_id = resource["id"]
+            resource_name = resource["name"]
+            dict_of_dicts_add(
+                self.metadata, "resource_names", f"{iso3}_{admin_level}", resource_name
+            )
             url = resource["url"]
             encoding = self._configuration["encoding_exceptions"].get(
                 resource["name"], "utf-8"
@@ -327,6 +331,8 @@ class CODPopulation:
                         "Population",
                         f"cod-ps-{iso.lower()}",
                         f"Duplicates found at admin {admin_level}",
+                        resource_name=self.metadata["resource_names"][f"{iso}_{admin_level}"],
+                        err_to_hdx=True,
                     )
 
             admin_data = admin_data.to_dict("records")

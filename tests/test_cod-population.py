@@ -185,6 +185,14 @@ class TestCODPopulation:
                     assert cod_population.metadata == {
                         "countries": ["CAF", "COD"],
                         "reference_year": {2020, 2015},
+                        "resource_names": {
+                            "CAF_1": "caf_admpop_adm1_2015_v2.csv",
+                            "CAF_2": "caf_admpop_adm2_2015_v2.csv",
+                            "CAF_3": "caf_admpop_adm3_2015_v2.csv",
+                            "COD_0": "cod_admpop_adm0_2020.csv",
+                            "COD_1": "cod_admpop_adm1_2020.csv",
+                            "COD_2": "cod_admpop_adm2_2020.csv",
+                        },
                     }
 
                     dataset = cod_population.generate_dataset()

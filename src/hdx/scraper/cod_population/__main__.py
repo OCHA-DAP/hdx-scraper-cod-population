@@ -11,7 +11,7 @@ from os.path import dirname, expanduser, join
 
 from hdx.api.configuration import Configuration
 from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
-from hdx.facades.infer_arguments import facade
+from hdx.facades.keyword_arguments import facade
 from hdx.location.country import Country
 from hdx.utilities.downloader import Download
 from hdx.utilities.path import temp_dir

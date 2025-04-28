@@ -17,7 +17,11 @@ from hdx.location.country import Country
 from hdx.scraper.framework.utilities.hapi_admins import complete_admins
 from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dateparse import iso_string_from_datetime, parse_date_range
-from hdx.utilities.dictandlist import dict_of_dicts_add, dict_of_lists_add, dict_of_sets_add
+from hdx.utilities.dictandlist import (
+    dict_of_dicts_add,
+    dict_of_lists_add,
+    dict_of_sets_add,
+)
 from hdx.utilities.retriever import Retrieve
 from pandas import DataFrame
 
@@ -165,7 +169,9 @@ class CODPopulation:
                             try:
                                 adm_name = normalize(
                                     "NFKD",
-                                    adm_name.encode("latin-1", "ignore").decode("utf-8"),
+                                    adm_name.encode("latin-1", "ignore").decode(
+                                        "utf-8"
+                                    ),
                                 )
                             except UnicodeDecodeError:
                                 pass
@@ -220,8 +226,12 @@ class CODPopulation:
                         "Country": Country.get_country_name_from_iso3(iso3),
                     }
                     for adm_level in range(1, 5):
-                        population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(adm_level)
-                        population_row[f"ADM{adm_level}_NAME"] = adm_names.get(adm_level)
+                        population_row[f"ADM{adm_level}_PCODE"] = adm_codes.get(
+                            adm_level
+                        )
+                        population_row[f"ADM{adm_level}_NAME"] = adm_names.get(
+                            adm_level
+                        )
                     population_row.update(population_values)
                     dict_of_lists_add(self.data, admin_level, population_row)
 
@@ -310,7 +320,9 @@ class CODPopulation:
             )
 
             # check for duplicates
-            pcode_header = "location_code" if admin_level == 0 else f"ADM{admin_level}_PCODE"
+            pcode_header = (
+                "location_code" if admin_level == 0 else f"ADM{admin_level}_PCODE"
+            )
             subset = admin_data[
                 [
                     pcode_header,
@@ -331,7 +343,9 @@ class CODPopulation:
                         "Population",
                         f"cod-ps-{iso.lower()}",
                         f"Duplicates found at admin {admin_level}",
-                        resource_name=self.metadata["resource_names"][f"{iso}_{admin_level}"],
+                        resource_name=self.metadata["resource_names"][
+                            f"{iso}_{admin_level}"
+                        ],
                         err_to_hdx=True,
                     )
 
@@ -392,7 +406,9 @@ class CODPopulation:
             filename="hdx_hapi_population_global_hrp.csv",
             resourcedata={
                 "name": self._configuration["hapi_resources"]["hrp"]["name"],
-                "description": self._configuration["hapi_resources"]["hrp"]["description"],
+                "description": self._configuration["hapi_resources"]["hrp"][
+                    "description"
+                ],
             },
             encoding="utf-8-sig",
         )
@@ -404,7 +420,9 @@ class CODPopulation:
             filename="hdx_hapi_population_global_non_hrp.csv",
             resourcedata={
                 "name": self._configuration["hapi_resources"]["non_hrp"]["name"],
-                "description": self._configuration["hapi_resources"]["non_hrp"]["description"],
+                "description": self._configuration["hapi_resources"]["non_hrp"][
+                    "description"
+                ],
             },
             encoding="utf-8-sig",
         )
@@ -413,7 +431,9 @@ class CODPopulation:
 
 def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
     pattern = f"adm(in)?{admin_level}_?p?code"
-    code_headers = [header for header in headers if re.match(pattern, header, re.IGNORECASE)]
+    code_headers = [
+        header for header in headers if re.match(pattern, header, re.IGNORECASE)
+    ]
     return code_headers
 
 
@@ -434,7 +454,9 @@ def _get_name_headers(
     if len(en_name_headers) == 1:
         return en_name_headers
     latin_name_headers = [
-        n for n in name_headers if n[-3] == "_" and n[-2:].lower() not in non_latin_alphabets
+        n
+        for n in name_headers
+        if n[-3] == "_" and n[-2:].lower() not in non_latin_alphabets
     ]
     if len(latin_name_headers) > 0:
         return latin_name_headers

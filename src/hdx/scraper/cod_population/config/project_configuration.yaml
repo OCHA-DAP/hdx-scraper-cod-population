@@ -15,6 +15,7 @@ hapi_resources:
 
 tags:
   - "baseline population"
+  - "hxl"
   - "sex and age disaggregated data-sadd"
 
 hxl_tags:

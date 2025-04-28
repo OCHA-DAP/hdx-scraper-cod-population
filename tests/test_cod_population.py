@@ -216,6 +216,7 @@ class TestCODPopulation:
                             "readthedocs.io/en/latest/data_usage_guides/geography_and_"
                             "infrastructure/#baseline-population) for more information",
                             "format": "csv",
+                            "p_coded": True,
                             "resource_type": "file.upload",
                             "url_type": "upload",
                         }

@@ -259,6 +259,12 @@ class CODPopulation:
         dataset["cod_level"] = "cod-standard"
 
         for admin_level, admin_data in self.data.items():
+            resourcedata = {
+                "name": f"cod_population_admin{admin_level}.csv",
+                "description": " ",
+            }
+            if admin_level > 0:
+                resourcedata["p_coded"] = True
             hxl_tags = self._configuration["hxl_tags"]
             dataset.generate_resource_from_iterable(
                 headers=list(hxl_tags.keys()),
@@ -266,10 +272,7 @@ class CODPopulation:
                 hxltags=hxl_tags,
                 folder=self._retriever.temp_dir,
                 filename=f"cod_population_admin{admin_level}.csv",
-                resourcedata={
-                    "name": f"cod_population_admin{admin_level}.csv",
-                    "description": " ",
-                },
+                resourcedata=resourcedata,
                 encoding="utf-8-sig",
             )
         return dataset
@@ -409,6 +412,7 @@ class CODPopulation:
                 "description": self._configuration["hapi_resources"]["hrp"][
                     "description"
                 ],
+                "p_coded": True,
             },
             encoding="utf-8-sig",
         )

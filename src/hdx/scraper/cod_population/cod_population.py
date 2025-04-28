@@ -427,6 +427,7 @@ class CODPopulation:
                 "description": self._configuration["hapi_resources"]["non_hrp"][
                     "description"
                 ],
+                "p_coded": True,
             },
             encoding="utf-8-sig",
         )

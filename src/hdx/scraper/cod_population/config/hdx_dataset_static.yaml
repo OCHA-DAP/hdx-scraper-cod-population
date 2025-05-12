@@ -7,7 +7,7 @@ package_creator: HDX Data Systems Team
 private: False
 maintainer: aa13de36-28c5-47a7-8d0b-6d7c754ba8c8
 owner_org:  hdx
-data_update_frequency: 1
+data_update_frequency: 365
 notes: Latest COD population statistics compiled at the admin level. The CSV files contain subnational p-codes, their corresponding administrative names, source organization, and reference dates where available. These are constructed from individual country level population files, which can be found using [this search](https://data.humdata.org/dataset/?dataseries_name=COD+-+Subnational+Population+Statistics) on HDX.
 subnational: "1"
 dataset_preview: no_preview

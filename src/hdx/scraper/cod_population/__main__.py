@@ -7,7 +7,7 @@ script then creates in HDX.
 
 import logging
 from os import getenv
-from os.path import dirname, expanduser, join
+from os.path import expanduser, join
 from typing import Optional
 
 from hdx.api.configuration import Configuration
@@ -15,7 +15,7 @@ from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.facades.infer_arguments import facade
 from hdx.location.country import Country
 from hdx.utilities.downloader import Download
-from hdx.utilities.path import temp_dir
+from hdx.utilities.path import script_dir_plus_file, temp_dir
 from hdx.utilities.retriever import Retrieve
 
 from hdx.scraper.cod_population.cod_population import CODPopulation
@@ -68,13 +68,15 @@ def main(
 
                 dataset = cod_population.generate_dataset()
                 dataset.update_from_yaml(
-                    path=join(dirname(__file__), "config", "hdx_dataset_static.yaml")
+                    path=script_dir_plus_file(
+                        join("config", "hdx_dataset_static.yaml"), main
+                    )
                 )
 
                 hapi_dataset = cod_population.generate_hapi_dataset()
                 hapi_dataset.update_from_yaml(
-                    path=join(
-                        dirname(__file__), "config", "hdx_hapi_dataset_static.yaml"
+                    path=script_dir_plus_file(
+                        join("config", "hdx_hapi_dataset_static.yaml"), main
                     )
                 )
 
@@ -100,7 +102,7 @@ if __name__ == "__main__":
         main,
         user_agent_config_yaml=join(expanduser("~"), ".useragents.yaml"),
         user_agent_lookup=_USER_AGENT_LOOKUP,
-        project_config_yaml=join(
-            dirname(__file__), "config", "project_configuration.yaml"
+        project_config_yaml=script_dir_plus_file(
+            join("config", "project_configuration.yaml"), main
         ),
     )

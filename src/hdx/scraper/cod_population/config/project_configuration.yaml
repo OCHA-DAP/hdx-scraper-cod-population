@@ -78,6 +78,9 @@ reference_year_exceptions:
   "som_pplp_adm1_v2.csv": 2014
   "som_pplp_adm2_v2.csv": 2014
 
+matching_exceptions:
+  - "AZE"
+
 non_latin_alphabets:
   - "ar"
   - "bg"

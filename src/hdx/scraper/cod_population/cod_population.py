@@ -229,7 +229,13 @@ class CODPopulation:
                 for adm_level in range(1, admin_level + 1):
                     adm_code_header = adm_code_headers.get(adm_level)
                     if adm_code_header:
-                        adm_codes[adm_level] = row[adm_code_header]
+                        pcode = row[adm_code_header]
+                        if isinstance(pcode, str):
+                            if "E+" in pcode:
+                                pcode = str(int(float(pcode)))
+                        else:
+                            pcode = str(pcode)
+                        adm_codes[adm_level] = pcode
                     adm_name_header = adm_name_headers.get(adm_level)
                     if adm_name_header:
                         adm_name = row[adm_name_header]
@@ -444,7 +450,10 @@ class CODPopulation:
                         row["provider_admin1_name"],
                         row["provider_admin2_name"],
                     ]
-                    adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
+                    if country_iso in self._configuration["matching_exceptions"]:
+                        adm_codes = ["", ""]
+                    else:
+                        adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
                     adm_names = ["", ""]
                     try:
                         adm_level, warnings = complete_admins(

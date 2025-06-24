@@ -152,7 +152,6 @@ class CODPopulation:
         source = dataset["dataset_source"]
         organization = dataset.get_organization()["display_name"]
         dataset_id = dataset["id"]
-        dict_of_lists_add(self.metadata, "countries", iso3)
 
         hrp = "Y" if Country.get_hrp_status_from_iso3(iso3) else "N"
         gho = "Y" if Country.get_gho_status_from_iso3(iso3) else "N"
@@ -310,6 +309,8 @@ class CODPopulation:
                 dataset_name,
                 "Missing all admin levels",
             )
+        else:
+            dict_of_lists_add(self.metadata, "countries", iso3)
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:
             error_message = f"missing unexpected admin levels: {missing_levels}"

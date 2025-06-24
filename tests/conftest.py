@@ -52,6 +52,7 @@ def configuration(config_dir):
         [
             {"name": "caf", "title": "Central African Republic"},
             {"name": "cod", "title": "Democratic Republic of the Congo"},
+            {"name": "vct", "title": "Saint Vincent and the Grenadines"},
             {"name": "world", "title": "World"},
         ]
     )

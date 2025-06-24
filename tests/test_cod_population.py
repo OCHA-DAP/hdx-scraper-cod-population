@@ -33,6 +33,7 @@ class TestCODPopulation:
                     )
                     cod_population.download_country_data("CAF")
                     cod_population.download_country_data("COD")
+                    cod_population.download_country_data("VCT")
                     assert len(cod_population.data) == 4
                     assert cod_population.data[0][0] == {
                         "ISO3": "COD",
@@ -55,8 +56,7 @@ class TestCODPopulation:
                         "Age_max": 4,
                         "Population": 9853646,
                         "Reference_year": 2020,
-                        "Source": "Health Zone population statistics developed by the DRC IM "
-                        "Working Group",
+                        "Source": "Health Zone population statistics developed by the DRC IM Working Group",
                         "Contributor": "OCHA Democratic Republic of the Congo (DRC)",
                         "dataset_hdx_id": "d1160fa9-1d58-4f96-9df5-edbff2e80895",
                         "resource_hdx_id": "fa85e725-30c5-4f9a-aefc-2e8db0db36fa",
@@ -82,8 +82,7 @@ class TestCODPopulation:
                         "Age_max": None,
                         "Population": 448465,
                         "Reference_year": 2015,
-                        "Source": "General Census of Population and Housing, Census Office "
-                        "Central African Republic",
+                        "Source": "General Census of Population and Housing, Census Office Central African Republic",
                         "Contributor": "OCHA Central African Republic",
                         "dataset_hdx_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
                         "resource_hdx_id": "58403047-f30e-4719-94b0-8d6f7e0f6942",
@@ -109,8 +108,7 @@ class TestCODPopulation:
                         "Age_max": None,
                         "Population": 28016,
                         "Reference_year": 2015,
-                        "Source": "General Census of Population and Housing, Census "
-                        "Office Central African Republic",
+                        "Source": "General Census of Population and Housing, Census Office Central African Republic",
                         "Contributor": "OCHA Central African Republic",
                         "dataset_hdx_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
                         "resource_hdx_id": "2b74b781-c889-4cb9-9624-418577809c1e",
@@ -136,15 +134,14 @@ class TestCODPopulation:
                         "Age_max": None,
                         "Population": 276042,
                         "Reference_year": 2015,
-                        "Source": "General Census of Population and Housing, Census Office "
-                        "Central African Republic",
+                        "Source": "General Census of Population and Housing, Census Office Central African Republic",
                         "Contributor": "OCHA Central African Republic",
                         "dataset_hdx_id": "d3600c4b-d93d-4ed0-b7b1-359a060b916a",
                         "resource_hdx_id": "17c5c468-fb12-4114-8286-3feb2069ab0a",
                     }
                     assert cod_population.metadata == {
-                        "countries": ["CAF", "COD"],
-                        "reference_year": {2020, 2015},
+                        "countries": ["CAF", "COD", "VCT"],
+                        "reference_year": {2020, 2022, 2015},
                         "resource_ids": {
                             "CAF_1": "58403047-f30e-4719-94b0-8d6f7e0f6942",
                             "CAF_2": "2b74b781-c889-4cb9-9624-418577809c1e",
@@ -152,6 +149,7 @@ class TestCODPopulation:
                             "COD_0": "fa85e725-30c5-4f9a-aefc-2e8db0db36fa",
                             "COD_1": "44bafdcb-e234-4fa2-9d1a-278715384408",
                             "COD_2": "bf8edc01-c28a-470d-9720-cb2d9435dfdf",
+                            "VCT": "fa36e701-91cd-4792-b11b-6a6326d4d4d4",
                         },
                         "resource_names": {
                             "CAF_1": "caf_admpop_adm1_2015_v2.csv",
@@ -160,6 +158,7 @@ class TestCODPopulation:
                             "COD_0": "cod_admpop_adm0_2020.csv",
                             "COD_1": "cod_admpop_adm1_2020.csv",
                             "COD_2": "cod_admpop_adm2_2020.csv",
+                            "VCT": "vct_admpop_2022.xlsx",
                         },
                     }
 
@@ -167,8 +166,8 @@ class TestCODPopulation:
                     assert dataset == {
                         "name": "cod-ps-global",
                         "title": "OCHA Global Subnational Population Statistics",
-                        "groups": [{"name": "caf"}, {"name": "cod"}],
-                        "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",
+                        "groups": [{"name": "caf"}, {"name": "cod"}, {"name": "vct"}],
+                        "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
                         "cod_level": "cod-standard",
                         "tags": [
                             {
@@ -198,8 +197,8 @@ class TestCODPopulation:
                     assert hapi_dataset == {
                         "name": "hdx-hapi-population",
                         "title": "HDX HAPI - Geography & Infrastructure: Baseline Population",
-                        "groups": [{"name": "caf"}, {"name": "cod"}],
-                        "dataset_date": "[2015-01-01T00:00:00 TO 2020-12-31T23:59:59]",
+                        "groups": [{"name": "caf"}, {"name": "cod"}, {"name": "vct"}],
+                        "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
                         "tags": [
                             {
                                 "name": "baseline population",
@@ -217,19 +216,31 @@ class TestCODPopulation:
                     }
                     assert hapi_dataset.get_resources() == [
                         {
-                            "name": "Global Geography & Infrastructure: Baseline Population "
-                            "(HRP countries)",
-                            "description": "Baseline Population data from HDX HAPI for HRP "
-                            "countries, please see [the documentation](https://hdx-hapi."
-                            "readthedocs.io/en/latest/data_usage_guides/geography_and_"
-                            "infrastructure/#baseline-population) for more information",
+                            "name": "Global Geography & Infrastructure: Baseline Population (HRP countries)",
+                            "description": "Baseline Population data from HDX HAPI for HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/geography_and_infrastructure/#baseline-population) for more information",
                             "format": "csv",
                             "p_coded": True,
                             "resource_type": "file.upload",
                             "url_type": "upload",
-                        }
+                        },
+                        {
+                            "name": "Global Geography & Infrastructure: Baseline Population (Non-HRP countries)",
+                            "description": "Baseline Population data from HDX HAPI for non-HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/geography_and_infrastructure/#baseline-population) for more information",
+                            "format": "csv",
+                            "p_coded": True,
+                            "resource_type": "file.upload",
+                            "url_type": "upload",
+                        },
                     ]
                     assert_files_same(
                         join("tests", "fixtures", "hdx_hapi_population_global_hrp.csv"),
                         join(temp_folder, "hdx_hapi_population_global_hrp.csv"),
+                    )
+                    assert_files_same(
+                        join(
+                            "tests",
+                            "fixtures",
+                            "hdx_hapi_population_global_non_hrp.csv",
+                        ),
+                        join(temp_folder, "hdx_hapi_population_global_non_hrp.csv"),
                     )

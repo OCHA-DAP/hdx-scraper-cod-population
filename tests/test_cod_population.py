@@ -145,6 +145,14 @@ class TestCODPopulation:
                     assert cod_population.metadata == {
                         "countries": ["CAF", "COD"],
                         "reference_year": {2020, 2015},
+                        "resource_ids": {
+                            "CAF_1": "58403047-f30e-4719-94b0-8d6f7e0f6942",
+                            "CAF_2": "2b74b781-c889-4cb9-9624-418577809c1e",
+                            "CAF_3": "17c5c468-fb12-4114-8286-3feb2069ab0a",
+                            "COD_0": "fa85e725-30c5-4f9a-aefc-2e8db0db36fa",
+                            "COD_1": "44bafdcb-e234-4fa2-9d1a-278715384408",
+                            "COD_2": "bf8edc01-c28a-470d-9720-cb2d9435dfdf",
+                        },
                         "resource_names": {
                             "CAF_1": "caf_admpop_adm1_2015_v2.csv",
                             "CAF_2": "caf_admpop_adm2_2015_v2.csv",

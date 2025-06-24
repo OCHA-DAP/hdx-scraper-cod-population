@@ -3,19 +3,17 @@
 
 import logging
 import re
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 from unicodedata import normalize
 
 import numpy as np
 from hdx.api.configuration import Configuration
 from hdx.api.utilities.hdx_error_handler import HDXErrorHandler
 from hdx.data.dataset import Dataset
-from hdx.data.hdxobject import HDXError
 from hdx.data.resource import Resource
 from hdx.location.adminlevel import AdminLevel
 from hdx.location.country import Country
 from hdx.scraper.framework.utilities.hapi_admins import complete_admins
-from hdx.utilities.base_downloader import DownloadError
 from hdx.utilities.dateparse import iso_string_from_datetime, parse_date_range
 from hdx.utilities.dictandlist import (
     dict_of_dicts_add,
@@ -23,7 +21,7 @@ from hdx.utilities.dictandlist import (
     dict_of_sets_add,
 )
 from hdx.utilities.retriever import Retrieve
-from pandas import DataFrame
+from pandas import DataFrame, isna, read_csv, read_excel
 
 logger = logging.getLogger(__name__)
 
@@ -46,31 +44,63 @@ class CODPopulation:
         self.nonmatching_headers = {}
         self.year_sources = {}
 
-    def download_country_data(self, iso3: str) -> None:
-        dataset_name = f"cod-ps-{iso3.lower()}"
-        try:
-            dataset = Dataset.read_from_hdx(dataset_name)
-        except HDXError:
-            logger.info(f"Can't read dataset for {iso3}")
-            return
-        if not dataset:
-            return
-        if dataset["archived"] or dataset.get("cod_level") is None:
-            return
-
-        logger.info(f"Downloading population data for {iso3}")
-        year_end = int(dataset.get_time_period(date_format="%Y")["enddate_str"])
-        source = dataset["dataset_source"]
-        organization = dataset.get_organization()["display_name"]
-        dataset_id = dataset["id"]
-        dict_of_lists_add(self.metadata, "countries", iso3)
-
-        hrp = Country.get_hrp_status_from_iso3(iso3)
-        gho = Country.get_gho_status_from_iso3(iso3)
-        hrp = "Y" if hrp else "N"
-        gho = "Y" if gho else "N"
-
+    def download_excel_data(self, iso3: str, dataset: Dataset) -> Tuple[List, Dict]:
+        dataset_name = dataset["name"]
         missing_levels = []
+        data = {}
+        excel_resources = [
+            r
+            for r in dataset.get_resources()
+            if r.get_format() in ["xlsx", "xls"]
+            and "gazetteer" not in r["description"].lower()
+            and "taxonomy" not in r["description"].lower()
+        ]
+        if len(excel_resources) == 0:
+            self._error_handler.add_message(
+                "Population",
+                dataset_name,
+                "No excel resource found",
+            )
+            return missing_levels, data
+        if len(excel_resources) > 1:
+            excel_resources = _select_latest_resource(excel_resources)
+        if len(excel_resources) > 1:
+            self._error_handler.add_message(
+                "Population",
+                dataset_name,
+                "more than one excel resource found",
+            )
+            return missing_levels, data
+        resource = excel_resources[0]
+        resource_id = resource["id"]
+        dict_of_dicts_add(self.metadata, "resource_ids", iso3, resource_id)
+        resource_name = resource["name"]
+        dict_of_dicts_add(self.metadata, "resource_names", iso3, resource_name)
+        filepath = self._retriever.download_file(resource["url"])
+        excel_data = read_excel(filepath, sheet_name=None)
+        for admin_level in range(0, 5):
+            sheetnames = [
+                s
+                for s in excel_data
+                if bool(re.match(f".*adm(in)?.?{admin_level}.*", s, re.IGNORECASE))
+            ]
+            if len(sheetnames) == 0:
+                missing_levels.append(admin_level)
+                continue
+            if len(sheetnames) > 1:
+                self._error_handler.add_message(
+                    "Population",
+                    dataset_name,
+                    f"more than one adm{admin_level} tab found",
+                )
+                continue
+            data[admin_level] = excel_data[sheetnames[0]]
+        return missing_levels, data
+
+    def download_csv_data(self, iso3: str, dataset: Dataset) -> Tuple[List, Dict]:
+        dataset_name = dataset["name"]
+        missing_levels = []
+        data = {}
         for admin_level in range(0, 5):
             # Find a csv resource for each admin level
             adm_resources = [
@@ -93,23 +123,62 @@ class CODPopulation:
                 continue
             resource = adm_resources[0]
             resource_id = resource["id"]
+            dict_of_dicts_add(
+                self.metadata, "resource_ids", f"{iso3}_{admin_level}", resource_id
+            )
             resource_name = resource["name"]
             dict_of_dicts_add(
                 self.metadata, "resource_names", f"{iso3}_{admin_level}", resource_name
             )
-            url = resource["url"]
+            filepath = self._retriever.download_file(resource["url"])
             encoding = self._configuration["encoding_exceptions"].get(
                 resource["name"], "utf-8"
             )
-            try:
-                headers, rows = self._retriever.get_tabular_rows(url, encoding=encoding)
-            except DownloadError:
-                self._error_handler.add_message(
-                    "Population",
-                    dataset_name,
-                    f"download failed for {resource['name']}",
-                )
-                continue
+            csv_data = read_csv(filepath, encoding=encoding)
+            data[admin_level] = csv_data
+
+        return missing_levels, data
+
+    def download_country_data(self, iso3: str) -> None:
+        dataset_name = f"cod-ps-{iso3.lower()}"
+        dataset = Dataset.read_from_hdx(dataset_name)
+        if not dataset:
+            return
+        if dataset["archived"] or dataset.get("cod_level") is None:
+            return
+
+        logger.info(f"Downloading population data for {iso3}")
+        year_end = int(dataset.get_time_period(date_format="%Y")["enddate_str"])
+        source = dataset["dataset_source"]
+        organization = dataset.get_organization()["display_name"]
+        dataset_id = dataset["id"]
+
+        hrp = "Y" if Country.get_hrp_status_from_iso3(iso3) else "N"
+        gho = "Y" if Country.get_gho_status_from_iso3(iso3) else "N"
+
+        csv_resources = [
+            r
+            for r in dataset.get_resources()
+            if r.get_format() == "csv"
+            and re.match(".*adm(in)?[0-5].*", r["name"], re.IGNORECASE)
+        ]
+        if len(csv_resources) == 0:
+            missing_levels, data = self.download_excel_data(iso3, dataset)
+        else:
+            missing_levels, data = self.download_csv_data(iso3, dataset)
+
+        for admin_level, rows in data.items():
+            resource_id = self.metadata["resource_ids"].get(
+                iso3, self.metadata["resource_ids"].get(f"{iso3}_{admin_level}")
+            )
+            resource_name = self.metadata["resource_names"].get(
+                iso3, self.metadata["resource_names"].get(f"{iso3}_{admin_level}")
+            )
+            encoding = self._configuration["encoding_exceptions"].get(
+                resource_name, "utf-8"
+            )
+            rows.columns = (x.lower().replace(" ", "") for x in rows.columns)
+            headers = list(rows.columns)
             # Find the correct p-code header and admin name headers
             adm_code_headers = {}
             adm_name_headers = {}
@@ -135,19 +204,18 @@ class CODPopulation:
                 else:
                     adm_name_headers[adm_level] = name_headers[0]
             reference_year = self._configuration["reference_year_exceptions"].get(
-                resource["name"]
+                resource_name
             )
-            resource_year = _get_resource_year(resource["name"])
-            date_header = headers.index("year") if "year" in headers else None
+            resource_year = _get_resource_year(resource_name)
             if reference_year:
                 dict_of_sets_add(self.year_sources, iso3, "exception")
-            for row in rows:
+            for _, row in rows.iterrows():
                 row_non_null = [r for r in row if r]
-                if "#" in row_non_null[0]:
+                if "#" in str(row_non_null[0]):
                     continue
                 if not reference_year:
-                    if date_header is not None:
-                        reference_year = int(row[date_header])
+                    if "year" in headers:
+                        reference_year = int(row["year"])
                         dict_of_sets_add(self.year_sources, iso3, "date header")
                     elif resource_year != -1:
                         reference_year = resource_year
@@ -161,10 +229,16 @@ class CODPopulation:
                 for adm_level in range(1, admin_level + 1):
                     adm_code_header = adm_code_headers.get(adm_level)
                     if adm_code_header:
-                        adm_codes[adm_level] = row[headers.index(adm_code_header)]
+                        pcode = row[adm_code_header]
+                        if isinstance(pcode, str):
+                            if "E+" in pcode:
+                                pcode = str(int(float(pcode)))
+                        else:
+                            pcode = str(pcode)
+                        adm_codes[adm_level] = pcode
                     adm_name_header = adm_name_headers.get(adm_level)
                     if adm_name_header:
-                        adm_name = row[headers.index(adm_name_header)]
+                        adm_name = row[adm_name_header]
                         if encoding == "latin-1":
                             try:
                                 adm_name = normalize(
@@ -177,19 +251,19 @@ class CODPopulation:
                                 pass
                         adm_names[adm_level] = adm_name
 
-                for header_i, header in enumerate(headers):
+                for header in headers:
                     if not _match_population_header(header):
                         dict_of_sets_add(self.nonmatching_headers, iso3, header)
                         continue
-                    population = row[header_i]
-                    if population is None:
+                    population = row[header]
+                    if population is None or isna(population):
                         continue
                     if population == "NA":
                         population = 0
                         self._error_handler.add_message(
                             "Population",
                             dataset_name,
-                            f"adm{adm_level} has NA population values",
+                            f"adm{admin_level} has NA population values",
                             message_type="warning",
                         )
                     if isinstance(population, str):
@@ -201,7 +275,7 @@ class CODPopulation:
                         self._error_handler.add_message(
                             "Population",
                             dataset_name,
-                            f"adm{adm_level} has weird header {header}",
+                            f"adm{admin_level} has weird header {header}",
                         )
                         continue
 
@@ -235,6 +309,14 @@ class CODPopulation:
                     population_row.update(population_values)
                     dict_of_lists_add(self.data, admin_level, population_row)
 
+        if len(missing_levels) == 5:
+            self._error_handler.add_message(
+                "Population",
+                dataset_name,
+                "Missing all admin levels",
+            )
+        else:
+            dict_of_lists_add(self.metadata, "countries", iso3)
         missing_levels = _check_missing_levels(missing_levels)
         if len(missing_levels) > 0:
             error_message = f"missing unexpected admin levels: {missing_levels}"
@@ -368,7 +450,10 @@ class CODPopulation:
                         row["provider_admin1_name"],
                         row["provider_admin2_name"],
                     ]
-                    adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
+                    if country_iso in self._configuration["matching_exceptions"]:
+                        adm_codes = ["", ""]
+                    else:
+                        adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
                     adm_names = ["", ""]
                     try:
                         adm_level, warnings = complete_admins(

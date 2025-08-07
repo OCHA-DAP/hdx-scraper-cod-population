@@ -15,7 +15,7 @@ cachetools==5.5.2
     # via
     #   -c requirements.txt
     #   google-auth
-certifi==2025.6.15
+certifi==2025.8.3
     # via
     #   -c requirements.txt
     #   requests
@@ -35,7 +35,7 @@ click==8.2.1
     # via
     #   -c requirements.txt
     #   typer
-coverage==7.9.1
+coverage==7.10.2
     # via pytest-cov
 defopt==7.0.0
     # via
@@ -50,7 +50,7 @@ docopt==0.6.2
     #   -c requirements.txt
     #   ckanapi
     #   num2words
-docutils==0.21.2
+docutils==0.22
     # via
     #   -c requirements.txt
     #   defopt
@@ -79,12 +79,12 @@ gspread==6.2.1
     # via
     #   -c requirements.txt
     #   hdx-python-scraper
-hdx-python-api==6.4.5
+hdx-python-api==6.4.7
     # via
     #   -c requirements.txt
     #   hdx-scraper-cod-population (pyproject.toml)
     #   hdx-python-scraper
-hdx-python-country==3.9.4
+hdx-python-country==3.9.6
     # via
     #   -c requirements.txt
     #   hdx-python-api
@@ -93,7 +93,7 @@ hdx-python-scraper==2.6.5
     # via
     #   -c requirements.txt
     #   hdx-scraper-cod-population (pyproject.toml)
-hdx-python-utilities==3.8.7
+hdx-python-utilities==3.9.0
     # via
     #   -c requirements.txt
     #   hdx-scraper-cod-population (pyproject.toml)
@@ -135,7 +135,7 @@ jsonpath-ng==1.7.0
     # via
     #   -c requirements.txt
     #   libhxl
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   -c requirements.txt
     #   frictionless
@@ -181,7 +181,7 @@ num2words==0.5.14
     # via
     #   -c requirements.txt
     #   quantulum3
-numpy==2.3.1
+numpy==2.3.2
     # via
     #   -c requirements.txt
     #   pandas
@@ -195,11 +195,11 @@ openpyxl==3.1.5
     #   hdx-python-utilities
 packaging==25.0
     # via pytest
-pandas==2.3.0
+pandas==2.3.1
     # via
     #   -c requirements.txt
     #   hdx-scraper-cod-population (pyproject.toml)
-petl==1.7.16
+petl==1.7.17
     # via
     #   -c requirements.txt
     #   frictionless
@@ -286,7 +286,7 @@ referencing==0.36.2
     #   -c requirements.txt
     #   jsonschema
     #   jsonschema-specifications
-regex==2024.11.6
+regex==2025.7.34
     # via
     #   -c requirements.txt
     #   hdx-python-scraper
@@ -311,11 +311,11 @@ rfc3986==2.0.0
     # via
     #   -c requirements.txt
     #   frictionless
-rich==14.0.0
+rich==14.1.0
     # via
     #   -c requirements.txt
     #   typer
-rpds-py==0.25.1
+rpds-py==0.27.0
     # via
     #   -c requirements.txt
     #   jsonschema
@@ -387,7 +387,7 @@ typer==0.16.0
     # via
     #   -c requirements.txt
     #   frictionless
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -c requirements.txt
     #   frictionless

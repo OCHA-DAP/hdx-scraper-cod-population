@@ -220,16 +220,12 @@ class TestCODPopulation:
                             "description": "Baseline Population data from HDX HAPI for HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/geography_and_infrastructure/#baseline-population) for more information",
                             "format": "csv",
                             "p_coded": True,
-                            "resource_type": "file.upload",
-                            "url_type": "upload",
                         },
                         {
                             "name": "Global Geography & Infrastructure: Baseline Population (Non-HRP countries)",
                             "description": "Baseline Population data from HDX HAPI for non-HRP countries, please see [the documentation](https://hdx-hapi.readthedocs.io/en/latest/data_usage_guides/geography_and_infrastructure/#baseline-population) for more information",
                             "format": "csv",
                             "p_coded": True,
-                            "resource_type": "file.upload",
-                            "url_type": "upload",
                         },
                     ]
                     assert_files_same(

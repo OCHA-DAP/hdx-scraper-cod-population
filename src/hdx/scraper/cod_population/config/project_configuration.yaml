@@ -39,28 +39,28 @@ hxl_tags:
   "Source": "#meta+source"
   "Contributor": "#meta+contributor"
 
-hapi_hxl_tags:
-  location_code: "#country+code"
-  has_hrp: "#meta+has_hrp"
-  in_gho: "#meta+in_gho"
-  provider_admin1_name: "#adm1+name+provider"
-  provider_admin2_name: "#adm2+name+provider"
-  admin1_code: "#adm1+code"
-  admin1_name: "#adm1+name"
-  admin2_code: "#adm2+code"
-  admin2_name: "#adm2+name"
-  admin_level: "#adm+level"
-  gender: "#gender+code"
-  age_range: "#age+range"
-  min_age: "#age+min"
-  max_age: "#age+max"
-  population: "#population"
-  reference_period_start: "#date+start"
-  reference_period_end: "#date+end"
-  dataset_hdx_id: "#meta+dataset_id"
-  resource_hdx_id: "#meta+resource_id"
-  warning: "#meta+warning"
-  error: "#meta+error"
+hapi_headers:
+  - location_code
+  - has_hrp
+  - in_gho
+  - provider_admin1_name
+  - provider_admin2_name
+  - admin1_code
+  - admin1_name
+  - admin2_code
+  - admin2_name
+  - admin_level
+  - gender
+  - age_range
+  - min_age
+  - max_age
+  - population
+  - reference_period_start
+  - reference_period_end
+  - dataset_hdx_id
+  - resource_hdx_id
+  - warning
+  - error
 
 encoding_exceptions:
   "ago_admpop_adm2_2024.csv": "latin-1"

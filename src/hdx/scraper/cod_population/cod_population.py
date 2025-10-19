@@ -485,6 +485,7 @@ class CODPopulation:
                         newrow["admin1_name"] = ""
                         newrow["admin2_code"] = ""
                         newrow["admin2_name"] = ""
+                        warnings = []
 
                     newrow["admin_level"] = admin_level
                     newrow["gender"] = row["gender"]

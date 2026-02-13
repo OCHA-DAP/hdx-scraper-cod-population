@@ -28,7 +28,7 @@ _UPDATED_BY_SCRIPT = "HDX Scraper: cod-population"
 
 
 def main(
-    save: bool = True,
+    save: bool = False,
     use_saved: bool = False,
     err_to_hdx: Optional[bool] = None,
 ) -> None:

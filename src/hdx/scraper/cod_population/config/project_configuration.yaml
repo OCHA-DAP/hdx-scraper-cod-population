@@ -18,26 +18,26 @@ tags:
   - "gender and age disaggregated data-gadd"
   - "hxl"
 
-hxl_tags:
-  "ISO3": "#country+code"
-  "Country": "#country+name"
-  "ADM1_PCODE": "#adm1+code"
-  "ADM1_NAME": "#adm1+name"
-  "ADM2_PCODE": "#adm2+code"
-  "ADM2_NAME": "#adm2+name"
-  "ADM3_PCODE": "#adm3+code"
-  "ADM3_NAME": "#adm3+name"
-  "ADM4_PCODE": "#adm4+code"
-  "ADM4_NAME": "#adm4+name"
-  "Population_group": "#population+group"
-  "Gender": "#gender"
-  "Age_range": "#age+range"
-  "Age_min": "#age+min"
-  "Age_max": "#age+max"
-  "Population": "#population"
-  "Reference_year": "#date+year"
-  "Source": "#meta+source"
-  "Contributor": "#meta+contributor"
+headers:
+  - ISO3
+  - Country
+  - ADM1_PCODE
+  - ADM1_NAME
+  - ADM2_PCODE
+  - ADM2_NAME
+  - ADM3_PCODE
+  - ADM3_NAME
+  - ADM4_PCODE
+  - ADM4_NAME
+  - Population_group
+  - Gender
+  - Age_range
+  - Age_min
+  - Age_max
+  - Population
+  - Reference_year
+  - Source
+  - Contributor
 
 hapi_headers:
   - location_code

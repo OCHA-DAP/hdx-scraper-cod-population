@@ -347,14 +347,12 @@ class CODPopulation:
             }
             if admin_level > 0:
                 resourcedata["p_coded"] = True
-            hxl_tags = self._configuration["hxl_tags"]
-            dataset.generate_resource_from_iterable(
-                headers=list(hxl_tags.keys()),
-                iterable=admin_data,
-                hxltags=hxl_tags,
+            dataset.generate_resource(
                 folder=self._retriever.temp_dir,
                 filename=f"cod_population_admin{admin_level}.csv",
+                rows=admin_data,
                 resourcedata=resourcedata,
+                headers=self._configuration["headers"],
                 encoding="utf-8-sig",
             )
         return dataset

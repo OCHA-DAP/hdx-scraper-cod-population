@@ -1,5 +1,4 @@
 ﻿ISO3,Country,ADM1_PCODE,ADM1_NAME,ADM2_PCODE,ADM2_NAME,ADM3_PCODE,ADM3_NAME,ADM4_PCODE,ADM4_NAME,Population_group,Gender,Age_range,Age_min,Age_max,Population,Reference_year,Source,Contributor
-#country+code,#country+name,#adm1+code,#adm1+name,#adm2+code,#adm2+name,#adm3+code,#adm3+name,#adm4+code,#adm4+name,#population+group,#gender,#age+range,#age+min,#age+max,#population,#date+year,#meta+source,#meta+contributor
 CAF,Central African Republic,CF22,Nana Mambéré,CF224,Abba,,,,,T_TL,all,all,,,28016,2015,"General Census of Population and Housing, Census Office Central African Republic",OCHA Central African Republic
 CAF,Central African Republic,CF61,Basse Kotto,CF612,Alindao,,,,,T_TL,all,all,,,82154,2015,"General Census of Population and Housing, Census Office Central African Republic",OCHA Central African Republic
 CAF,Central African Republic,CF21,Mambéré Kadéi,CF214,Amada-Gaza,,,,,T_TL,all,all,,,21595,2015,"General Census of Population and Housing, Census Office Central African Republic",OCHA Central African Republic

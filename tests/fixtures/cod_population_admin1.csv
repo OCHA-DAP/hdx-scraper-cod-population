@@ -1,5 +1,4 @@
 ﻿ISO3,Country,ADM1_PCODE,ADM1_NAME,ADM2_PCODE,ADM2_NAME,ADM3_PCODE,ADM3_NAME,ADM4_PCODE,ADM4_NAME,Population_group,Gender,Age_range,Age_min,Age_max,Population,Reference_year,Source,Contributor
-#country+code,#country+name,#adm1+code,#adm1+name,#adm2+code,#adm2+name,#adm3+code,#adm3+name,#adm4+code,#adm4+name,#population+group,#gender,#age+range,#age+min,#age+max,#population,#date+year,#meta+source,#meta+contributor
 CAF,Central African Republic,CF11,Ombella M'Poko,,,,,,,T_TL,all,all,,,448465,2015,"General Census of Population and Housing, Census Office Central African Republic",OCHA Central African Republic
 CAF,Central African Republic,CF12,Lobaye,,,,,,,T_TL,all,all,,,310366,2015,"General Census of Population and Housing, Census Office Central African Republic",OCHA Central African Republic
 CAF,Central African Republic,CF21,Mambéré Kadéi,,,,,,,T_TL,all,all,,,458611,2015,"General Census of Population and Housing, Census Office Central African Republic",OCHA Central African Republic

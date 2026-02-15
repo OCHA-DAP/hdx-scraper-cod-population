@@ -135,6 +135,7 @@ class CODPopulation:
                 resource["name"], "utf-8"
             )
             csv_data = read_csv(filepath, encoding=encoding)
+            csv_data.dropna(axis=1, how="all", inplace=True)
             data[admin_level] = csv_data
 
         return missing_levels, data

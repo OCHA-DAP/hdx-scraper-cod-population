@@ -471,7 +471,9 @@ class CODPopulation:
                             adm_codes = ["", ""]
                             warnings = [f"PCode unknown {adm_codes[1]}->''"]
                         except TypeError as ex:
-                            logger.error(f"Invalid admin name in {country_iso}: {provider_admin1_name} {provider_admin2_name}!")
+                            logger.error(
+                                f"Invalid admin name in {country_iso}: {provider_admin1_name} {provider_admin2_name}!"
+                            )
                             raise ex
 
                         for warning in warnings:

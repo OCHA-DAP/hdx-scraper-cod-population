@@ -135,7 +135,8 @@ class CODPopulation:
                 resource["name"], "utf-8"
             )
             csv_data = read_csv(filepath, encoding=encoding)
-            csv_data.dropna(axis=1, how="all", inplace=True)
+            adm_cols = [col for col in csv_data.columns if col.startswith("ADM")]
+            csv_data[adm_cols] = csv_data[adm_cols].fillna("")
             data[admin_level] = csv_data
 
         return missing_levels, data
@@ -446,9 +447,11 @@ class CODPopulation:
                     }
                     # Check p-codes
                     if admin_level > 0:
+                        provider_admin1_name = row["provider_admin1_name"]
+                        provider_admin2_name = row["provider_admin2_name"]
                         provider_adm_names = [
-                            row["provider_admin1_name"],
-                            row["provider_admin2_name"],
+                            provider_admin1_name,
+                            provider_admin2_name,
                         ]
                         if country_iso in self._configuration["matching_exceptions"]:
                             adm_codes = ["", ""]
@@ -467,6 +470,10 @@ class CODPopulation:
                         except IndexError:
                             adm_codes = ["", ""]
                             warnings = [f"PCode unknown {adm_codes[1]}->''"]
+                        except TypeError as ex:
+                            logger.error(f"Invalid admin name in {country_iso}: {provider_admin1_name} {provider_admin2_name}!")
+                            raise ex
+
                         for warning in warnings:
                             self._error_handler.add_message(
                                 "Population",

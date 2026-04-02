@@ -16,7 +16,6 @@ hapi_resources:
 tags:
   - "baseline population"
   - "gender and age disaggregated data-gadd"
-  - "hxl"
 
 headers:
   - ISO3

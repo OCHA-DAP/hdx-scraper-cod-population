@@ -80,17 +80,17 @@ def main(
                     )
                 )
 
-                dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                )
-
-                hapi_dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                )
+                # dataset.create_in_hdx(
+                #     remove_additional_resources=True,
+                #     match_resource_order=False,
+                #     updated_by_script=_UPDATED_BY_SCRIPT,
+                # )
+                #
+                # hapi_dataset.create_in_hdx(
+                #     remove_additional_resources=True,
+                #     match_resource_order=False,
+                #     updated_by_script=_UPDATED_BY_SCRIPT,
+                # )
 
                 logger.info("Finished processing")
 

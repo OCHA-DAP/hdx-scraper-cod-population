@@ -1,6 +1,6 @@
 # Collector specific configuration
 dataset_name: "cod-ps-global"
-dataset_title: "OCHA Global Subnational Population Statistics"
+dataset_title: "Global - Subnational Population Statistics"
 
 hapi_dataset_name: "hdx-hapi-population"
 hapi_dataset_title: "HDX HAPI - Geography & Infrastructure: Baseline Population"

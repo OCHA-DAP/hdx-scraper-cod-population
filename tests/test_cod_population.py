@@ -165,7 +165,7 @@ class TestCODPopulation:
                     dataset = cod_population.generate_dataset()
                     assert dataset == {
                         "name": "cod-ps-global",
-                        "title": "OCHA Global Subnational Population Statistics",
+                        "title": "Global - Subnational Population Statistics",
                         "groups": [{"name": "caf"}, {"name": "cod"}, {"name": "vct"}],
                         "dataset_date": "[2015-01-01T00:00:00 TO 2022-12-31T23:59:59]",
                         "cod_level": "cod-standard",

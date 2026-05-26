@@ -329,9 +329,11 @@ class CODPopulation:
             )
 
     def generate_dataset(self) -> Dataset:
+        dataset_name = self._configuration["dataset_name"]
+        logger.info(f"Generating {dataset_name}...")
         dataset = Dataset(
             {
-                "name": self._configuration["dataset_name"],
+                "name": dataset_name,
                 "title": self._configuration["dataset_title"],
             }
         )
@@ -357,6 +359,9 @@ class CODPopulation:
                 headers=self._configuration["headers"],
                 encoding="utf-8-sig",
             )
+        for level in list(self.data.keys()):
+            if level > 2:
+                del self.data[level]
         return dataset
 
     def get_pcodes(self) -> None:
@@ -367,12 +372,14 @@ class CODPopulation:
             self._admins.append(admin)
 
     def generate_hapi_dataset(self) -> Dataset:
+        dataset_name = self._configuration["hapi_dataset_name"]
+        logger.info(f"Generating {dataset_name}...")
         # Set up admin levels and p-codes
         self.get_pcodes()
 
         dataset = Dataset(
             {
-                "name": self._configuration["hapi_dataset_name"],
+                "name": dataset_name,
                 "title": self._configuration["hapi_dataset_title"],
             }
         )
@@ -389,6 +396,7 @@ class CODPopulation:
                 if admin_level > 2:
                     continue
                 admin_data = DataFrame(admin_data)
+                self.data[admin_level] = None
                 admin_data.replace(np.nan, None, inplace=True)
                 admin_data.rename(
                     columns={

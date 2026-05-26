@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """cod population scraper"""
 
+import csv
 import logging
 import re
 from typing import Dict, List, Tuple
@@ -389,14 +390,36 @@ class CODPopulation:
         dataset.set_time_period_year_range(year_start, year_end)
         dataset.add_tags(self._configuration["tags"])
 
-        population_rows_non_hrp = []
+        headers = self._configuration["hapi_headers"]
+        hrp_filename = "hdx_hapi_population_global_hrp.csv"
+        non_hrp_filename = "hdx_hapi_population_global_non_hrp.csv"
+        hrp_path = self._retriever.temp_dir / hrp_filename
+        non_hrp_path = self._retriever.temp_dir / non_hrp_filename
 
-        def get_rows():
-            for admin_level, admin_data in self.data.items():
+        with (
+            open(hrp_path, "w", newline="", encoding="utf-8-sig") as hrp_file,
+            open(non_hrp_path, "w", newline="", encoding="utf-8-sig") as non_hrp_file,
+        ):
+            writer_hrp = csv.DictWriter(
+                hrp_file, fieldnames=headers, extrasaction="ignore"
+            )
+            writer_non_hrp = csv.DictWriter(
+                non_hrp_file, fieldnames=headers, extrasaction="ignore"
+            )
+
+            writer_hrp.writeheader()
+            writer_non_hrp.writeheader()
+
+            for admin_level in list(self.data.keys()):
                 if admin_level > 2:
                     continue
-                admin_data = DataFrame(admin_data)
+                admin_data = self.data.get(admin_level)
+                if not admin_data:
+                    continue
+                # Free from self.data immediately to release memory
                 self.data[admin_level] = None
+
+                admin_data = DataFrame(admin_data)
                 admin_data.replace(np.nan, None, inplace=True)
                 admin_data.rename(
                     columns={
@@ -442,9 +465,13 @@ class CODPopulation:
                             err_to_hdx=True,
                         )
 
-                admin_data = admin_data.to_dict("records")
+                # Convert to records to write out
+                records = admin_data.to_dict("records")
+                # Free DataFrame and auxiliary structures immediately
+                del admin_data, subset, duplicates
 
-                for row in admin_data:
+                # Now write the records
+                for row in records:
                     country_iso = row["location_code"]
                     newrow = {
                         "location_code": country_iso,
@@ -525,39 +552,38 @@ class CODPopulation:
                     newrow["error"] = row["error"]
 
                     if newrow["has_hrp"] == "Y":
-                        yield newrow
+                        writer_hrp.writerow(newrow)
                     else:
-                        population_rows_non_hrp.append(newrow)
+                        writer_non_hrp.writerow(newrow)
 
-        headers = self._configuration["hapi_headers"]
-        dataset.generate_resource(
-            folder=self._retriever.temp_dir,
-            filename="hdx_hapi_population_global_hrp.csv",
-            rows=get_rows(),
-            resourcedata={
-                "name": self._configuration["hapi_resources"]["hrp"]["name"],
-                "description": self._configuration["hapi_resources"]["hrp"][
-                    "description"
-                ],
+                # Free records for this admin level
+                del records
+
+        hapi_resource_configuration = self._configuration["hapi_resources"]
+        # Create HRP Resource
+        resource_hrp = Resource(
+            {
+                "name": hapi_resource_configuration["hrp"]["name"],
+                "description": hapi_resource_configuration["hrp"]["description"],
                 "p_coded": True,
-            },
-            headers=headers,
-            encoding="utf-8-sig",
+            }
         )
-        dataset.generate_resource(
-            folder=self._retriever.temp_dir,
-            filename="hdx_hapi_population_global_non_hrp.csv",
-            rows=population_rows_non_hrp,
-            resourcedata={
-                "name": self._configuration["hapi_resources"]["non_hrp"]["name"],
-                "description": self._configuration["hapi_resources"]["non_hrp"][
-                    "description"
-                ],
+        resource_hrp.set_format("csv")
+        resource_hrp.set_file_to_upload(hrp_path)
+        dataset.add_update_resource(resource_hrp)
+
+        # Create Non-HRP Resource
+        resource_non_hrp = Resource(
+            {
+                "name": hapi_resource_configuration["non_hrp"]["name"],
+                "description": hapi_resource_configuration["non_hrp"]["description"],
                 "p_coded": True,
-            },
-            headers=headers,
-            encoding="utf-8-sig",
+            }
         )
+        resource_non_hrp.set_format("csv")
+        resource_non_hrp.set_file_to_upload(non_hrp_path)
+        dataset.add_update_resource(resource_non_hrp)
+
         return dataset
 
 

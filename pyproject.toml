@@ -14,7 +14,7 @@ dynamic = ["version"]
 requires-python = ">=3.13"
 dependencies = [
   "hdx-python-api>=6.6.5",
-  "hdx-python-scraper>=2.7.2",
+  "hdx-python-pipelineutils>=0.0.3",
   "hdx-python-country>=4.1.1",
   "hdx-python-utilities>=4.0.8",
   "pandas",
@@ -72,7 +72,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-local-folder = ["hdx.scraper.cod_population"]
-known-third-party = ["hdx.api", "hdx.location", "hdx.data", "hdx.database", "hdx.facades", "hdx.scraper", "hdx.utilities"]
+known-third-party = ["hdx.api", "hdx.location", "hdx.data", "hdx.database", "hdx.facades", "hdx.pipelineutils", "hdx.utilities"]
 
 # ----------------------------------------------------------------------------
 # Pytest (Testing)

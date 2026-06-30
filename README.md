@@ -5,7 +5,17 @@
 
 This script extracts data from the COD population statistics datasets on HDX to
 create a global dataset and a HAPI dataset. It makes several hundred read calls
-to HDX and two writes. It is run every day.
+to HDX (approximately one per COD population dataset per country) and two writes.
+Temporary per-country CSV files (up to a few MB each) are created during
+processing and deleted afterwards. The two writes produce first a standard global
+dataset (three CSV files split by admin level: `cod_population_admin0.csv`,
+`cod_population_admin1.csv`, `cod_population_admin2.csv`, each up to a few MB),
+and then a HAPI dataset generated from the same processed data. The input Excel
+and CSV resources are parsed to extract gender- and age-disaggregated population
+figures (using header patterns such as `F_0_5`, `M_65_plus`, `T_TL`); P-codes
+are resolved against COD admin boundaries; encoding issues are normalised; and
+output rows are enriched with HRP and GHO status before being written first to
+the standard global dataset and then to the HAPI dataset. It is run every weekday.
 
 ## Development
 

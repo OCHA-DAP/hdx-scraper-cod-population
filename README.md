@@ -15,7 +15,48 @@ and CSV resources are parsed to extract gender- and age-disaggregated population
 figures (using header patterns such as `F_0_5`, `M_65_plus`, `T_TL`); P-codes
 are resolved against COD admin boundaries; encoding issues are normalised; and
 output rows are enriched with HRP and GHO status before being written first to
-the standard global dataset and then to the HAPI dataset. It is run every weekday.
+the standard global dataset and then to the HAPI dataset. It runs every weekday
+at around 10 AM UTC and takes approximately 15 minutes to complete.
+
+## Data Pipeline
+
+### API reads (several hundred calls per run)
+
+- **COD population datasets** (~one HDX read per country): metadata and resource
+  downloads for each country's COD population dataset. Each source file is an
+  Excel or CSV containing gender- and age-disaggregated population counts
+  (columns such as `F_0_5`, `M_65_plus`, `T_TL`) at admin levels 0–2.
+
+### API writes (~2 calls per run)
+
+- **Standard global dataset** (1 write): creates or updates a dataset with three
+  CSV resources — `cod_population_admin0.csv`, `cod_population_admin1.csv`, and
+  `cod_population_admin2.csv` — each up to a few MB.
+- **HAPI dataset** (1 write): creates or updates the HAPI population dataset
+  derived from the same processed data.
+
+### Temporary files
+
+- Per-country CSV files (up to a few MB each), created during processing and
+  deleted afterwards.
+
+### Uploaded files
+
+- `cod_population_admin0.csv`, `cod_population_admin1.csv`,
+  `cod_population_admin2.csv`: global CSVs split by admin level, each up to a
+  few MB.
+- HAPI dataset resources derived from the global output.
+
+### Transformations
+
+1. **Age/gender disaggregation**: column headers are parsed for patterns such as
+   `F_0_5`, `M_65_plus`, and `T_TL` to extract sex and age-band values.
+2. **P-code resolution**: admin codes in the source data are cross-referenced
+   against COD admin boundaries to validate and canonicalise P-codes.
+3. **Encoding normalisation**: character encoding issues in source files are
+   detected and corrected.
+4. **HRP/GHO enrichment**: each output row is annotated with `has_hrp` and
+   `in_gho` flags looked up per ISO3 code.
 
 ## Development
 

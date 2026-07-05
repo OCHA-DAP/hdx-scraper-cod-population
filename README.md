@@ -15,8 +15,7 @@ and CSV resources are parsed to extract gender- and age-disaggregated population
 figures (using header patterns such as `F_0_5`, `M_65_plus`, `T_TL`); P-codes
 are resolved against COD admin boundaries; encoding issues are normalised; and
 output rows are enriched with HRP and GHO status before being written first to
-the standard global dataset and then to the HAPI dataset. It runs every weekday
-at around 10 AM UTC and takes approximately 15 minutes to complete.
+the standard global dataset and then to the HAPI dataset.
 
 ## Data Pipeline
 

@@ -19,13 +19,19 @@ dependencies = [
   "hdx-python-utilities>=4.0.8",
   "pandas",
 ]
+readme = "README.md"
+
+[project.urls]
+Homepage = "https://github.com/OCHA-DAP/hdx-scraper-cod-population"
+Repository = "https://github.com/OCHA-DAP/hdx-scraper-cod-population"
+Issues = "https://github.com/OCHA-DAP/hdx-scraper-cod-population/issues"
 
 [dependency-groups]
 dev = [
   "pytest",
   "pytest-cov",
   "pre-commit",
-  "ruff==0.12.0",
+  "ruff==0.14.14",
 ]
 
 [project.scripts]
@@ -61,10 +67,10 @@ src = ["src"]
 exclude = ["_version.py"]
 
 [tool.ruff.lint]
-select = [
-  "E",   # pycodestyle
-  "F",   # pyflakes
+# Defaults are E (pycodestyle) and F (pyflakes). We extend them:
+extend-select = [
   "I",   # isort
+  "UP",  # pyupgrade
 ]
 ignore = [
     "E501", # Line too long
@@ -72,7 +78,15 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-local-folder = ["hdx.scraper.cod_population"]
-known-third-party = ["hdx.api", "hdx.location", "hdx.data", "hdx.database", "hdx.facades", "hdx.pipelineutils", "hdx.utilities"]
+known-third-party = [
+    "hdx.api",
+    "hdx.location",
+    "hdx.data",
+    "hdx.database",
+    "hdx.facades",
+    "hdx.pipelineutils",
+    "hdx.utilities",
+]
 
 # ----------------------------------------------------------------------------
 # Pytest (Testing)

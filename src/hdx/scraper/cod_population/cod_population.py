@@ -4,7 +4,6 @@
 import csv
 import logging
 import re
-from typing import Dict, List, Tuple
 from unicodedata import normalize
 
 import numpy as np
@@ -45,7 +44,7 @@ class CODPopulation:
         self.nonmatching_headers = {}
         self.year_sources = {}
 
-    def download_excel_data(self, iso3: str, dataset: Dataset) -> Tuple[List, Dict]:
+    def download_excel_data(self, iso3: str, dataset: Dataset) -> tuple[list, dict]:
         dataset_name = dataset["name"]
         missing_levels = []
         data = {}
@@ -98,7 +97,7 @@ class CODPopulation:
             data[admin_level] = excel_data[sheetnames[0]]
         return missing_levels, data
 
-    def download_csv_data(self, iso3: str, dataset: Dataset) -> Tuple[List, Dict]:
+    def download_csv_data(self, iso3: str, dataset: Dataset) -> tuple[list, dict]:
         dataset_name = dataset["name"]
         missing_levels = []
         data = {}
@@ -587,7 +586,7 @@ class CODPopulation:
         return dataset
 
 
-def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
+def _get_code_headers(headers: list[str], admin_level: int) -> list[str]:
     pattern = f"adm(in)?{admin_level}_?p?code"
     code_headers = [
         header for header in headers if re.match(pattern, header, re.IGNORECASE)
@@ -596,8 +595,8 @@ def _get_code_headers(headers: List[str], admin_level: int) -> List[str]:
 
 
 def _get_name_headers(
-    headers: List[str], admin_level: int, non_latin_alphabets: List[str]
-) -> List[str]:
+    headers: list[str], admin_level: int, non_latin_alphabets: list[str]
+) -> list[str]:
     pattern = f"(adm(in)?{admin_level}(name)?_?)((name$)|[a-z][a-z]$)"
     other_pattern = f"^name_?{admin_level}$"
     name_headers = [
@@ -633,7 +632,7 @@ def _match_population_header(header: str) -> bool:
     return match
 
 
-def _get_gender_and_age_range(header: str) -> Tuple[str, str]:
+def _get_gender_and_age_range(header: str) -> tuple[str, str]:
     components = header.lower().split("_")
     gender = components[0]
     if gender == "t":
@@ -670,14 +669,14 @@ def _get_min_and_max_age(age_range: str) -> (int | None, int | None):
     return min_age, max_age
 
 
-def _check_missing_levels(missing_levels: List[int]) -> List[int]:
+def _check_missing_levels(missing_levels: list[int]) -> list[int]:
     expected_missing_levels = [i for i in range(5 - len(missing_levels), 5)]
     if missing_levels == expected_missing_levels:
         return []
     return missing_levels
 
 
-def _select_latest_resource(adm_resources: List[Resource]) -> List[Resource]:
+def _select_latest_resource(adm_resources: list[Resource]) -> list[Resource]:
     adm_names = [adm_resource["name"] for adm_resource in adm_resources]
     year_matches = [_get_resource_year(name) for name in adm_names]
     year_matches = [int(y) for y in year_matches]

@@ -34,9 +34,9 @@ def main(
     """Generate datasets and create them in HDX
 
     Args:
-        save (bool): Save downloaded data. Defaults to True.
-        use_saved (bool): Use saved data. Defaults to False.
-        err_to_hdx (Optional[bool]): Whether to write any errors to HDX metadata.
+        save: Save downloaded data. Defaults to False.
+        use_saved: Use saved data. Defaults to False.
+        err_to_hdx: Whether to write any errors to HDX metadata.
         Defaults to None.
 
     Returns:

@@ -655,7 +655,7 @@ def _get_gender_and_age_range(header: str) -> tuple[str, str]:
     return gender, age_range
 
 
-def _get_min_and_max_age(age_range: str) -> (int | None, int | None):
+def _get_min_and_max_age(age_range: str) -> tuple[int | None, int | None]:
     if age_range == "all" or age_range == "unknown":
         return None, None
     ages = age_range.split("-")

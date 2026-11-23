@@ -44,54 +44,54 @@ def main(
     """
     if err_to_hdx is None:
         err_to_hdx = getenv("ERR_TO_HDX")
-    with HDXErrorHandler(write_to_hdx=err_to_hdx) as error_handler:
-        with temp_dir(folder=_USER_AGENT_LOOKUP) as temp_folder:
-            with Download() as downloader:
-                retriever = Retrieve(
-                    downloader=downloader,
-                    fallback_dir=temp_folder,
-                    saved_dir=_SAVED_DATA_DIR,
-                    temp_dir=temp_folder,
-                    save=save,
-                    use_saved=use_saved,
-                )
-                configuration = Configuration.read()
-                countryiso3s = [key for key in Country.countriesdata()["countries"]]
+    with (
+        HDXErrorHandler(write_to_hdx=err_to_hdx) as error_handler,
+        temp_dir(folder=_USER_AGENT_LOOKUP) as temp_folder,
+        Download() as downloader,
+    ):
+        retriever = Retrieve(
+            downloader=downloader,
+            fallback_dir=temp_folder,
+            saved_dir=_SAVED_DATA_DIR,
+            temp_dir=temp_folder,
+            save=save,
+            use_saved=use_saved,
+        )
+        configuration = Configuration.read()
+        countryiso3s = [key for key in Country.countriesdata()["countries"]]
 
-                # Steps to generate dataset
-                cod_population = CODPopulation(
-                    configuration, retriever, temp_folder, error_handler
-                )
-                for iso3 in countryiso3s:
-                    cod_population.download_country_data(iso3)
+        # Steps to generate dataset
+        cod_population = CODPopulation(
+            configuration, retriever, temp_folder, error_handler
+        )
+        for iso3 in countryiso3s:
+            cod_population.download_country_data(iso3)
 
-                dataset = cod_population.generate_dataset()
-                dataset.update_from_yaml(
-                    path=script_dir_plus_file(
-                        join("config", "hdx_dataset_static.yaml"), main
-                    )
-                )
+        dataset = cod_population.generate_dataset()
+        dataset.update_from_yaml(
+            path=script_dir_plus_file(join("config", "hdx_dataset_static.yaml"), main)
+        )
 
-                hapi_dataset = cod_population.generate_hapi_dataset()
-                hapi_dataset.update_from_yaml(
-                    path=script_dir_plus_file(
-                        join("config", "hdx_hapi_dataset_static.yaml"), main
-                    )
-                )
+        hapi_dataset = cod_population.generate_hapi_dataset()
+        hapi_dataset.update_from_yaml(
+            path=script_dir_plus_file(
+                join("config", "hdx_hapi_dataset_static.yaml"), main
+            )
+        )
 
-                dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                )
+        dataset.create_in_hdx(
+            remove_additional_resources=True,
+            match_resource_order=False,
+            updated_by_script=_UPDATED_BY_SCRIPT,
+        )
 
-                hapi_dataset.create_in_hdx(
-                    remove_additional_resources=True,
-                    match_resource_order=False,
-                    updated_by_script=_UPDATED_BY_SCRIPT,
-                )
+        hapi_dataset.create_in_hdx(
+            remove_additional_resources=True,
+            match_resource_order=False,
+            updated_by_script=_UPDATED_BY_SCRIPT,
+        )
 
-                logger.info("Finished processing")
+        logger.info("Finished processing")
 
 
 if __name__ == "__main__":

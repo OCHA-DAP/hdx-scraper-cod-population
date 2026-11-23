@@ -78,7 +78,7 @@ class CODPopulation:
         dict_of_dicts_add(self.metadata, "resource_names", iso3, resource_name)
         filepath = self._retriever.download_file(resource["url"])
         excel_data = read_excel(filepath, sheet_name=None)
-        for admin_level in range(0, 5):
+        for admin_level in range(5):
             sheetnames = [
                 s
                 for s in excel_data
@@ -101,7 +101,7 @@ class CODPopulation:
         dataset_name = dataset["name"]
         missing_levels = []
         data = {}
-        for admin_level in range(0, 5):
+        for admin_level in range(5):
             # Find a csv resource for each admin level
             adm_resources = [
                 r
@@ -342,7 +342,7 @@ class CODPopulation:
         year_end = max(self.metadata["reference_year"])
         dataset.set_time_period_year_range(year_start, year_end)
         dataset.add_tags(self._configuration["tags"])
-        dataset["cod_level"] = "cod-standard"
+        dataset["cod_level"] = "cod-ps"
 
         for admin_level, admin_data in self.data.items():
             resourcedata = {
@@ -493,7 +493,7 @@ class CODPopulation:
                             adm_codes = [row["ADM1_PCODE"], row["ADM2_PCODE"]]
                         adm_names = ["", ""]
                         try:
-                            adm_level, warnings = complete_admins(
+                            _, warnings = complete_admins(
                                 self._admins,
                                 country_iso,
                                 provider_adm_names,
@@ -504,11 +504,11 @@ class CODPopulation:
                         except IndexError:
                             adm_codes = ["", ""]
                             warnings = [f"PCode unknown {adm_codes[1]}->''"]
-                        except TypeError as ex:
+                        except TypeError:
                             logger.error(
                                 f"Invalid admin name in {country_iso}: {provider_admin1_name} {provider_admin2_name}!"
                             )
-                            raise ex
+                            raise
 
                         for warning in warnings:
                             self._error_handler.add_message(

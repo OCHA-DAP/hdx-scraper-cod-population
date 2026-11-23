@@ -13,10 +13,10 @@ name = "hdx-scraper-cod_population"
 dynamic = ["version"]
 requires-python = ">=3.13"
 dependencies = [
-  "hdx-python-api>=6.6.5",
-  "hdx-python-pipelineutils>=0.0.7",
-  "hdx-python-country>=4.2.2",
-  "hdx-python-utilities>=4.2.0",
+  "hdx-python-api>=6.8.0",
+  "hdx-python-pipelineutils>=0.0.8",
+  "hdx-python-country>=4.3.1",
+  "hdx-python-utilities>=4.2.7",
   "pandas",
 ]
 readme = "README.md"
@@ -31,7 +31,7 @@ dev = [
   "pytest",
   "pytest-cov",
   "pre-commit",
-  "ruff==0.14.14",
+  "ruff==0.17.3",
 ]
 
 [project.scripts]

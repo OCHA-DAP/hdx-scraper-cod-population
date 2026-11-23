@@ -30,7 +30,7 @@ uv run pytest tests/test_cod_population.py
 
 Lint check:
 ```bash
-pre-commit run --all-files
+uv run pre-commit run --all-files
 ```
 
 ## Architecture
@@ -50,6 +50,16 @@ Requires `~/.hdx_configuration.yaml` with HDX credentials, or env vars: `HDX_KEY
 
 Requires `~/.useragents.yaml` with a `hdx-scraper-cod-population` entry.
 
+## Code Style
+
+- Formatted with `ruff` via pre-commit hooks. After changing any Python code, run:
+
+```bash
+uv run pre-commit run --all-files
+```
+
+- Python ≥ 3.13
+
 ## Collaboration Style
 
 - Be objective, not agreeable. Act as a partner, not a sycophant. Push back when you disagree, flag tradeoffs honestly, and don't sugarcoat problems.
@@ -59,3 +69,8 @@ Requires `~/.useragents.yaml` with a `hdx-scraper-cod-population` entry.
 ## Scope of Changes
 
 When fixing a bug or addressing PR feedback, change only what is necessary to resolve the specific issue. Do not refactor surrounding code, rename variables, adjust formatting, or make improvements in the same commit unless they are directly required by the fix.
+
+## Decision Records
+
+Non-trivial design decisions are recorded in `docs/decisions/` (see `docs/decisions/README.md`) —
+the distilled decision, not the full planning narrative, belongs here.
